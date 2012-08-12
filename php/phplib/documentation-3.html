@@ -1,0 +1,2430 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" 
+"http://www.w3.org/TR/REC-html40/loose.dtd">
+<HTML lang="ja">
+<HEAD>
+<META name="description" content="__COMMENT__">
+<META http-equiv="Content-Style-Type" content="text/css">
+<META http-equiv="Content-Script-Type" content="text/javascript">
+<TITLE>PHP Base Library ドキュメント リリース phplib_7: 基本機能</TITLE>
+<LINK rel="stylesheet" href="../../style.css">
+<LINK HREF="documentation-4.html" REL=next>
+<LINK HREF="documentation-2.html" REL=previous>
+<LINK HREF="documentation.html#toc3" REL=contents>
+<!--<SCRIPT language="JavaScript" src="rollover.js"> -->
+</HEAD>
+<BODY>
+<A HREF="documentation-4.html">次</A>
+<A HREF="documentation-2.html">前</A>
+<A HREF="documentation.html#toc3">目次</A>
+<HR>
+<H2><A NAME="s3">3. 基本機能</A></H2>
+
+<P>各クラスは、インスタンス変数とインスタンスメソッドを有しています。
+これらの変数およびメソッドのいくつかはカスタマイズが可能で、
+いくつかはクラス自体の内部で使用するためのクラスです。
+全てのクラスは本文書に記されていますが、
+内部変数およびメソッドの改修はサポートされていません。
+内部インターフェースは、ライブラリのバージョンが代わった際に
+予告無しに変更を受ける可能性が高いです。
+<P>
+<P>本節では、PHPLIB のコア機能をリファレンス形式で解説します。
+クラスは、上位のクラスから示しています。これは、
+この順番にした方がコア構造の理解がより容易であるためです。
+PHPLIBの全ての機能を使用するためには、コア構造を完全に理解する必要があります。
+<P>
+<H2><A NAME="ss3.1">3.1 DB_Sql</A>
+</H2>
+
+<P><CODE>DB_Sql</CODE> は、SQLデータベースにアクセスするために
+<CODE>CT_Sql</CODE>および<CODE>Auth</CODE>により使用されます。
+このクラスを直接使うこともお勧めです。
+<P>
+<H3>インスタンス変数</H3>
+
+<P>
+<P>
+<CENTER><TABLE BORDER><TR><TD>
+<BR>
+Host </TD><TD>SQLサーバーを実行しているホスト</TD></TR><TR><TD>
+Database</TD><TD>サーバーで使用するデータベースまたはインスタンスの名前</TD></TR><TR><TD>
+User </TD><TD>接続を行う際に使用されるユーザー名</TD></TR><TR><TD>
+Password</TD><TD>接続を行う際に使用されるパスワード</TD></TR><TR><TD>
+Row </TD><TD>現在の結果行(レコード)の数で、0から始まります。</TD></TR><TR><TD>
+Errno </TD><TD>整数: 直近のデータベース操作のエラー番号。</TD></TR><TR><TD>
+Error </TD><TD>文字列: 直近のデータベース操作のエラーメッセージ。</TD></TR><TR><TD>
+Halt_On_Error</TD><TD>"yes", "no", "report" のどれか。
+"yes" (デフォルト) に設定した場合、データベースインターフェースはエラーをリポートし、
+プログラムを停止します。"report" に設定した場合、
+データベースインターフェースは同じく全てのエラーをリポートしますが、
+アプリケーションに "false" をリポートしつつ、実行を続け、withErrno および Error を適当に設定します。
+"no" に設定した場合、データベースインターフェースはエラーをレポートせず、
+アプリケーションに "false" を通知し、適当な Errno および Error が設定されます。
+</TD></TR><TR><TD>
+Auto_Free</TD><TD>論理値: いくつかのDBインターフェースにおいて過去の結果保持用メモリを解放するためのフラグです。</TD></TR><TR><TD>
+Debug </TD><TD>論理値: 設定された場合、データベースは全てのクエリーと追加の統計出力を出力します。</TD></TR><TR><TD>
+type </TD><TD>定数文字列: データベースインタフェースの名前、例えば、"mysql" や "oracle"</TD></TR><TR><TD>
+revision</TD><TD>定数バージョン文字列: データベースAPIのバージョン(例えば 1.2)。API.Sql_table を実装するファイルの
+CVSリビジョンではありません。</TD><TD>string: <CODE>nextid()</CODE> API 関数で使用されるテーブル名。</TD></TR><TR><TD>
+
+<CAPTION>アクセス可能なインスタンス変数</CAPTION>
+</TD></TR></TABLE></CENTER>
+<P>
+<CENTER><TABLE BORDER><TR><TD>
+<BR>
+Record </TD><TD>いくつかのデータベースインターフェースでは、現在のテーブルの結果を保持する行となります。</TD></TR><TR><TD>
+Link_ID </TD><TD>SQL リンク ID.</TD></TR><TR><TD>
+Query_ID</TD><TD>SQL 結果 ID.</TD></TR><TR><TD>
+
+<CAPTION>内部インスタンス変数</CAPTION>
+</TD></TR></TABLE></CENTER>
+<P>
+<H3>インスタンスメソッド</H3>
+
+<P>
+<P>
+<H3>公開インスタンスメソッド</H3>
+
+<P>
+<P>
+<DL>
+<DT><B>DB_Sql($query = "")</B><DD><P>コンストラクタ。インスタンスを作成する際に、オプションでクエリー文字列を指定可能です。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+$db = new DB_Sql_Subclass("select * from mytable");
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>
+<DT><B>query($query_string)</B><DD><P><CODE>query_string</CODE> は、データベースに送信する SQL 文です。
+SQL文を送信した後、<CODE>Error</CODE> および <CODE>Errno</CODE> が更新されます。
+クエリーが文法的に間違っている場合(有効な結果IDは作成されません)、
+有意なエラーメッセージを付けて <CODE>halt()</CODE> がコールされます。
+<P>データベースへのアクティブな接続がない場合、<CODE>Host</CODE>, <CODE>Database</CODE>,
+<CODE>User</CODE>, <CODE>Password</CODE> インスタンス変数からの情報を
+使用して、<CODE>pconnect()</CODE> が実行されます。
+<P><CODE>query()</CODE> 文の結果を返します。
+この結果は、必ず有効な結果ID(Halt_On_Error が "yes" でない場合はfalse)となります。
+<P>
+<DT><B>next_record()</B><DD><P><CODE>next_record()</CODE> は、
+現在のクエリー結果のカーソルを前に進め、
+<CODE>Record</CODE>, <CODE>Row</CODE>,
+<CODE>Errno</CODE>, <CODE>Error</CODE> インスタンス変数を
+更新します。
+<P>新規結果レコードがある場合に、trueを返します。現在の結果セットの走査が終了した
+場合はfalseを返します。<CODE>Auto_Free</CODE> がtrueの場合、falseが返される前に
+<CODE>free_result()</CODE>が自動的にコールされます。
+<P>
+<DT><B>num_rows(), nf()</B><DD><P>現在のSELECTクエリーにより返される行(レコード)数
+を返します。
+<P><EM>注意:</EM> この情報は、全てのデータベースインタフェースで
+取得可能であるわけではありません。
+いくつかの先進的なデータベースでは、バックエンドが結果行を追加している間に
+非同期にクエリー結果を返し始めます。
+このような環境では、結果セット全体の大きさを知ることはできません。
+<P>そのような環境ではクエリー文のWHERE句を二重化し、
+COUNT(*)により行数を得る必要があります。
+この手法は、データベースによりクエリーパスとクエリー結果がキャッシュされているため、
+見た目よりも効率が悪いわけではありません。
+<P>
+<DT><B>affected_rows()</B><DD><P>
+現在のINSERT, UPDATE, DELETE クエリーで影響を受けた行(レコード)数を返します。
+<P>
+<DT><B>num_fields()</B><DD><P>現在のクエリーにより返されたカラムの数を返します。
+<P>
+<DT><B>np()</B><DD><P>現在のクエリーにより返された行の数を出力します。
+<P>
+<DT><B>f($field)</B><DD><P><CODE>Record[$field]</CODE>をアクセスするのと同じです。
+<P>
+<DT><B>p($field)</B><DD><P>Record[$field]を出力するのと同じです。
+<P>
+<DT><B>haltmsg($msg)</B><DD><P>この関数は<CODE>halt()</CODE>によりコールされ、
+データベースのエラーメッセージを出力します。
+使用する<CODE>DB_Sql</CODE>のサブクラスにおいてこのメソッドをオーバーライドし、
+アプリケーションの他の部分のレイアウトに適合させるためにエラーメッセージを
+フォーマットすることが可能です。
+データベースにエラーが発生したことをアプリケーションのオペレータに
+メールで通知するといったエラー処理を追加することも可能です。
+<P>
+<DT><B>seek($pos)</B><DD><P>結果セットにおける <CODE>Row</CODE> ポインタの位置を設定します。
+同じ結果セットを2回読む際や結果を不連続に読む際には便利です。
+<CODE>$pos</CODE> の指定が正しいかどうかは確認されません。
+<P><EM>注意:</EM> <CODE>Auto_Free</CODE> が true の場合、
+結果の最後のレコードを読み終わった時点で結果セットが既に解放されているために、
+<CODE>seek()</CODE> は使用できない可能性があります。
+<P><EM>注意:</EM> 全てのデータベースインターフェースが、シーク可能なカーソルを提供しているわけではありません。
+この機能はそのような環境では使用できません。
+<P>
+<DT><B>link_id()</B><DD><P>この関数は、このリンクIDは内部的に <CODE>pconnect()</CODE> を実行し、
+その結果である現在のリンクIDを返します。
+<P>この情報は必要ありません。
+<P>
+<DT><B>query_id()</B><DD><P>この関数は、データベースクラスにより内部的に <CODE>query()</CODE> 
+を実行した結果から現在の結果IDを返します。
+<P>この情報は必要ありません。
+<P>
+<DT><B>metadata($table = "", $full = false)</B><DD><P><CODE>$table</CODE> は、現在のデータベースの
+SQLテーブル名です。この関数は、<CODE>$table</CODE> の ( 0 から始まる)列番号を添字とした
+連想配列を返します。
+各連想配列の値は、<CODE>table</CODE> (列が属するテーブル)、<CODE>name</CODE> (列名)、
+<CODE>type</CODE> (列のデータ型)、<CODE>len</CODE> (列の幅)、<CODE>flags</CODE>
+(利用可能なデータベース依存の列のフラグ)で、各テーブルの列毎に1行となります。
+各行はテーブルの1つの列を表します。
+<P>The data returned by <CODE>metadata()</CODE> により返されたデータは、
+Table クラスに渡す際に使用することが可能です。
+<CODE>full</CODE> パラメータを指定した場合、
+フィールド名を添字とする列 <CODE>meta</CODE> が追加され、
+その名前のフィールド番号が返されます。
+また、テーブル幅を有するカラム <CODE>num_fields</CODE> も追加されます。
+<P><CODE>$table</CODE> が省略された場合、
+この関数は直近に実行されたクエリーの結果を返します。
+<EM>注意:</EM> この機能は、現在、MySQLインターフェースにおいてのみ
+実装されています。この機能を他のインターフェースに実装することを推奨します。
+<P><EM>注意:</EM> 現在、PostgreSQL および ODBC インターフェースが確実に
+レポートするのは、<CODE>table</CODE>, <CODE>name</CODE>, <CODE>type</CODE> データのみです。
+これを修正することを推奨します。
+<P>
+<DT><B>table_names()</B><DD><P>テーブル名とテーブルスペース名を有する配列を返します。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+テーブル名         : $return[$i]["table_name"]
+テーブルスペース名 : $return[$i]["tablespace_name"]
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>テーブルは、$i=0 から最後のテーブルまでです。
+<P>db_oracle.inc, db_oci8.inc, db_mysql.inc, db_pgsql.inc で実装されています。
+<P>
+<DT><B>nextid($sequence_name)</B><DD><P>この関数は、
+<CODE>$sequence_name</CODE> という名前のシーケンスからシーケンス番号を返します。
+この番号はユニークであることが保障されており、プライマリキーとして
+使用することが可能です。
+</DL>
+<P>
+<H3>内部インスタンスメソッド</H3>
+
+<P>
+<P>
+<DL>
+<DT><B>connect()</B><DD><P>必要に応じて<CODE>Link_ID</CODE> を作成するために内部で使用されます。
+リンク作成は暗黙のうちに行われるため、<CODE>connect()</CODE> を明示的に呼ぶ必要はありません。
+<P>
+<DT><B>halt($msg)</B><DD><P>
+
+最初のデータベース接続が行えなかった場合や接続先のデータベースが存在しなかった場合に
+<CODE>query()</CODE> により使用されます。<CODE>Halt_On_Error</CODE> の設定により、
+このメソッドは、エラーをレポートするために <CODE>haltmsg()</CODE> を呼びます。
+<P>
+<DT><B>free()</B><DD><P>設定に応じて、結果セットを解放するために <CODE>next_record()</CODE>
+により内部的に使用されます。
+</DL>
+<P>
+<H3>例</H3>
+
+<P>データベース接続用の適当なパラメータを与えるためにサブクラスを使用します。
+デフォルトの設定でも充分有用ですが、エラーメッセージをカスタマイズするために
+<CODE>halt()</CODE>をオーバーライト(上書き)することができます。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+class DB_Article extends DB_Sql {
+  var $classname = "DB_Article";
+
+  var $Host     = "sales.doma.in";
+  var $Database = "shop_project";
+  var $User     = "webuser";
+  var $Password = "";
+
+  function haltmsg($msg) {
+    printf("&lt;/td&gt;&lt;/table&gt;&lt;b&gt;Database error:&lt;/b&gt; %s&lt;br&gt;\n", $msg);
+    printf("&lt;b&gt;MySQL Error&lt;/b&gt;: %s (%s)&lt;br&gt;\n",
+      $this-&gt;Errno, $this-&gt;Error);
+    printf("shopmaster@doma.in と連絡を取り、");
+    printf("正確なエラーメッセージを報告してください。&lt;br&gt;\n");
+  }
+}
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>問い合わせを管理するには次のようにサブクラスのインスタンスを使用して下さい。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+$q = new DB_Article;
+
+$query = sprintf("select * from articles where article like '%%%s%%'",
+              $searchword);
+$q-&gt;query($query);
+
+while($q-&gt;next_record()) {
+  printf("&lt;tr&gt;&lt;td&gt;%s&lt;/td&gt;&lt;td&gt;%s&lt;/td&gt;&lt;/tr&gt;\n",
+    $q-&gt;f("art_id"),
+    $q-&gt;f("article"));
+}
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>
+<H3>データベース接続に関する追加情報</H3>
+
+<P>
+<P>PHP は、可能ならば接続を再利用します。
+同じホストに同じユーザ名とパスワードで接続が行われている場合、
+PHP により第2の接続は作成されません。
+代わりに既存の接続IDが呼出側に返されます。
+これは、全てのPHPデータベースインターフェースの
+*_connect() および *_pconnect() コールの両方に関して
+成り立ちます。
+<P>これに関してMySQLのユーザーに注意すべきことがあります。
+現在のデータベースを変更するために
+MySQLの "use" コマンドを決して使用しないで下さい。
+これを行うと、セッション管理を正しく行うことができなくなります。
+さもなくば、アプリケーションの部分に全てのPHPLIBテーブルを作成して下さい。
+<P>(例えば Oracle のような)いくつかのデータベースは、connect() の実行負荷が
+とても高いです。
+これらのデータベースについては、CGI PHP から  mod_php に変えた場合に性能が
+劇的に向上します。
+これは、PHPLIB がデータベースと接続するために "*_pconnect()" メソッドを
+使用するからです。
+mod_php においては、データベース接続は
+ページの作成処理が終了した後も Web サーバープロセスにより維持され、
+後で同じホスト/ユーザ名/パスワードの組み合わせで接続が要求された場合、
+再利用されます。
+<P>これによりデータベースサーバーに同時に接続する数は、
+最大でも "Webサーバーのプロセス数" ×
+"ホスト名/ユーザー名/パスワードの組み合わせの数" となります。
+このことを、ライセンス数およびサーバー負荷に関する計画を立てる際に頭に置いておいて
+下さい。CGI PHP を使用した場合、接続設定時の消費時間のせいで
+データベースサーバーへの同時接続数はおそらく減少することでしょう。
+しかし、接続設定時間が無視できるようなデータベースサーバー(例えば、MySQL)では、
+こうした手法は実用的なソリューションの 1 つです。
+(Oracle ではこの手法は試みないで下さい。)
+<P>
+<H3><CODE>nextid()の使用法</CODE></H3>
+
+<P>
+<P><CODE>nextid()</CODE> 関数をプライマリキーとして使用可能な
+シーケンス番号を得るために使用することが可能です。
+この関数は任意の数の名前付きのシーケンスを管理するため、
+コールする際にシーケンス名を指定する必要があります。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+$db = new DB_Article;
+
+$artnr = $db-&gt;nextid("article_sequence");
+$query = sprintf("insert into articles ( artnr, ...) values ('%s', ...)", 
+   $artnr, ...);
+$db-&gt;query($query);
+
+reset($articles);
+while(list($itemnr, $itemdesc) = each($articles)) {
+  $itemnr = $db-&gt;nextid("item_sequence");
+  $query = sprintf("insert into items (artnr, itemnr, ...) values ('%s', '%s', ...)",
+    $artnr, $itemnr, ...);
+  $db-&gt;query($query);
+}
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+
+<P>
+<H2><A NAME="ss3.2">3.2 ページ管理</A>
+</H2>
+
+<P>
+<P>
+<H3>アクセス可能な関数</H3>
+
+<P>
+<P>ページ管理は、現在、以下の関数から構成されています。
+<P>
+<DL>
+<DT><B>page_open(array("機能" => "クラス名"))</B><DD><P>この関数は、
+ページ機能/クラス名の組の配列を指定してコールされます。
+現在、有効な機能を以下に示します。
+<P>
+<DL>
+<DT><B>sess</B><DD><P>このページは、セッション変数を使用します。
+<P>
+<DT><B>auth</B><DD><P>このページはセッション認証を使用します。
+<CODE>auth</CODE> 機能を指定した場合、<CODE>sess</CODE> 機能も指定する必要があります。
+<P>
+<DT><B>perm</B><DD><P>このページは許可属性により保護されており、
+マッチする権利に関して認証を受けたユーザーのみがアクセス可能です。
+<CODE>perm</CODE>機能を指定する場合、<CODE>auth</CODE> および <CODE>sess</CODE>
+機能も指定する必要があります。
+<P>
+<DT><B>user</B><DD><P>このページは、ユーザ変数を使用します。
+<CODE>user</CODE> 機能を指定する場合、<CODE>auth</CODE> および
+<CODE>sess</CODE> 機能も指定する必要があります。
+</DL>
+<P>各機能では、次の例のように機能を実装したクラス名を指定します。
+<P>
+<HR>
+<PRE>
+  page_open(array("sess" =&gt; "Shop_Session"));
+</PRE>
+<HR>
+<P>この関数は、<CODE>$sess</CODE> として <CODE>Shop_Session</CODE> のインスタンスを作成し、
+初期化します。この関数は、機能の依存性も確認します。クラス<CODE>Shop_Session</CODE>の
+実装はあなたが提供することが前提となっていることに注意して下さい。
+これは、通常 <CODE>local.inc</CODE> で行われ、通常提供されたクラス <CODE>Session</CODE>
+を拡張することにより行われます。
+<P>この実行例は、本ドキュメントのクラスに関する説明の後に示されています。
+<P>
+<DT><B>page_close()</B><DD><P>
+<P>ページの最後で(全ての結果を計算し終わった後で)、<CODE>page_close()</CODE> をコール
+する必要があります。
+これにより、全てのページ状態、セッション、ユーザー変数をデータベースが保存されます。
+<CODE>page_close()</CODE> をコールした後でのセッション及びユーザー変数への変更は、
+記録されません。
+現在、1つのページで複数回 <CODE>page_close()</CODE> をコールすることが可能です。
+(これが将来のバージョンで保障されているわけではありません!)
+コールされる度にセッション変数が保存されます。
+<P><EM>注意:</EM> この動作は変更される予定です。
+レコードのロック機能を導入した際には、<CODE>page_close()</CODE>
+がコールされるのは各ページで1回のみであることが重要となります。
+これは、<CODE>page_close()</CODE> がセッションレコードを暗黙のうちにアンロックするからです。
+また、ロック時間を最小に保つためには、ページにおいて
+<CODE>page_close()</CODE> を出来るだけ早くコールすることが重要です。
+<P>
+<DT><B>sess_load(array("var" => "classname")</B><DD><P> 
+<P><EM>最新の機能</EM>。 
+いくつかのアプリケーションでは、
+1つまたは複数のセッションクラスが使用するデータを手動でロードする必要があります。
+@@TODO
+<P>
+<DT><B>sess_save(array("var" => "classname"))</B><DD><P><EM>最新の機能</EM>. @@TODO
+<P>
+</DL>
+<P>
+
+<H3>例</H3>
+
+<P>
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+&lt;?php
+  page_open(array("sess" =&gt; "Shop_Session"));
+  $sess-&gt;register("s");  // 詳細は、以下の "Session" を参照下さい。
+ ?&gt;
+&lt;html&gt;
+&lt;h1&gt;&lt;?php print ++$s ?&gt;&lt;/h1&gt;
+&lt;/html&gt;
+&lt;?php page_close(); ?&gt;
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>
+<H3>"cart" 機能はなくなりました</H3>
+
+<P> バージョン5 までのPHPLIBでは、 <CODE>page_open()</CODE> に関して
+"cart" 機能がありました。
+cart は、ライブラリの小ささ、保守性、構造を保つために PHPLIB の
+コア機能から削除されました。
+結果的に "cart" 機能はなくなりました。
+<P><CODE>Cart</CODE> クラスはまだ存在し、拡張機能として存在しています。
+cart を使用するには、手動で使用するページでインクルードし、インスタンスを作成する
+必要があります。
+詳細な情報については、<CODE>Cart</CODE> クラスを参照して下さい。
+<P>
+<P>
+<H2><A NAME="ss3.3">3.3 CT_Sql</A>
+</H2>
+
+<P>
+<P><CODE>Session</CODE>クラスは、データベースへのセッションデータの読み書き用に少々の SQL を
+使用します。
+セッションをデータベースの種類に依存しないようにするために、この SQL は独立したクラスである
+<CODE>CT_Sql</CODE> に分けてあります。
+<CODE>Session</CODE> は、現在、SQL コンテナであるか否かに関わらず記憶領域へのアクセスを
+常にコンテナクラスを通じて行います。
+<P>
+<H3>インスタンス変数</H3>
+
+<P>
+<P>
+<CENTER><TABLE BORDER><TR><TD>
+<BR>
+database_table</TD><TD>使用するデータベーステーブルの名前</TD></TR><TR><TD>
+database_class</TD><TD>クラス名。CT_Sql はデータの保存・取得の際にこのクラスを使用します</TD></TR><TR><TD>
+
+<CAPTION>アクセス可能なインスタンス変数</CAPTION>
+</TD></TR></TABLE></CENTER>
+<P>
+<H3>例</H3>
+
+<P>
+<P>コンテナに適当なパラメータを与えるためにサブクラスを使用します。
+通常、サブクラスは次のようになります。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+class My_Sql extends CT_Sql {
+        var $classname = "My_Sql";
+        var $database_table = "active_sessions";
+        var $database_class = "DB_Session";
+
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>こうして作成したMySQLをSession クラスの中で使用することができます。
+このクラスを参照するには、"that_class" 変数に "My_Sql" を指定して下さい。
+<P>
+<P>
+<H2><A NAME="ss3.4">3.4 CT_Split_Sql</A>
+</H2>
+
+<P>
+<P>
+<CODE>Session</CODE> クラスは、データベースとの間でセッションデータを読み書きするために
+少々の SQL を使用します。
+セッションをデータベースの種類に依存しないようにするために、<CODE>Session</CODE> は
+現在記憶領域へのアクセスを常にコンテナクラスを通じて行います。
+<CODE>CT_split_sql</CODE> コンテナは、<CODE>CT_Sql</CODE>コンテナと非常に
+良く似ています。
+違いは、シリアル化されたデータが指定したバイト数を超えた場合、
+フィールド全体を記憶するために複数の行を使用することです。
+<p>
+テーブルの構成が異なり、また、種々のデータベース実装での予約語と
+衝突することを避けるための列名が異なっているため、このコンテナは、<CODE>CT_Sql</CODE> と互換ではありません。
+このコンテナは、クラスのように <CODE>DB_Sql</CODE> を使用します。
+このため、このコンテナで全てのサポートされるデータベースをアクセスすることが可能です。
+<P>
+<H3>インスタンス変数</H3>
+
+<P>
+<P>
+<CENTER><TABLE BORDER><TR><TD>
+<BR>
+database_table</TD><TD>使用するデータベースのテーブル名</TD></TR><TR><TD>
+database_class</TD><TD>クラス名。CT_Sql はデータを保存・取得するためにこのクラスを使用します
+</TD></TR><TR><TD>
+split_length</TD><TD>数字。テーブルの各行に保存される最大バイト数を指定します。
+</TD></TR><TR><TD>
+<CAPTION>アクセス可能なインスタンス変数</CAPTION>
+</TD></TR></TABLE></CENTER>
+<P>
+<H3>例</H3>
+
+<P>
+<P>コンテナに適当なパラメータを指定するためにサブクラスを使用して下さい。
+通常、サブクラスは次のようになります。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+class My_Sql extends CT_Split_Sql {
+        var $classname = "My_Sql";
+        var $database_table = "active_sessions_split";
+        var $database_class = "DB_Session";
+        var $split_length = 4096;
+}
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>こうして、My_Sql をクラス Session で使用できるようになります。
+このクラスを参照するには、"that_class" 変数に "My_Sql" を指定して下さい。
+<P>
+<P>
+<H2><A NAME="ss3.5">3.5 CT_Shm</A>
+</H2>
+
+<P>
+<P>
+<CODE>Session</CODE> クラスは、データベースにセッションデータを読み書きするために
+少々の SQL を使用します。
+セッションをデータベースの種類に依存しないようにするために、<CODE>Session</CODE> は
+現在記憶領域へのアクセスを常にコンテナクラスを通じて行います。
+<CODE>Session</CODE> がコンテナとして共有メモリを使用するようにするには、
+<CODE>CT_Shm</CODE> を使用して下さい。
+<P>
+<H3>インスタンス変数</H3>
+
+<P>
+<P>
+<CENTER><TABLE BORDER><TR><TD>
+<BR>
+max_sessions</TD><TD>このコンテナによりサポートされる最大同時セッション数。</TD></TR><TR><TD>
+shm_key</TD><TD>使用する共有メモリセグメントのユニークな(重要!) キー。</TD></TR><TR><TD>
+shm_size</TD><TD>共有メモリセグメントのサイズ。 
+セグメントが最初にアクセスされる際に、サイズが設定されます。
+大量のセッション変数を使用しない場合には、
+shm_size = max_sessions * 600&nbsp; という式で計算した値で充分です。</TD></TR><TR><TD>
+
+<CAPTION>アクセス可能なインスタンス変数</CAPTION>
+</TD></TR></TABLE></CENTER>
+<P>
+<H3>例</H3>
+
+<P>
+<P>コンテナに適当なパラメータを指定するためにサブクラスを使用して下さい。
+通常、サブクラスは次のようになります。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+class My_Shm extends CT_Shm {
+        var $classname = "My_Shm";
+        var $max_sessions = 500;
+        var $shm_key = 0x1234232;
+        var $shm_size = 64000;
+}
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>こうして、My_Shm をクラス Session で使用できるようになります。
+このクラスを参照するには、"that_class" 変数に "My_Shm" を指定して下さい。
+<P>
+<P>
+<H2><A NAME="ss3.6">3.6 CT_Dbm</A>
+</H2>
+
+<P>
+<P>
+<CODE>Session</CODE> クラスは、データベースにセッションデータを読み書きするために
+少々のSQLを使用します。
+セッションをデータベースの種類に依存しないようにするために、<CODE>Session</CODE> は
+現在記憶領域へのアクセスを常にコンテナクラスを通じて行います。
+<CODE>Session</CODE> がコンテナとしてDBMデータベースファイルを使用するようにするには、
+<CODE>CT_Dbm</CODE> を使用して下さい。
+<P>
+<H3>インスタンス変数</H3>
+
+<P>
+<P>
+<CENTER><TABLE BORDER><TR><TD>
+<BR>
+dbm_file</TD><TD>dbmファイルのパス (既に存在している必要があり、かつ、
+サーバープロセスにより書きこみ可能である必要があります)</TD></TR><TR><TD>
+
+<CAPTION>アクセス可能なインスタンス変数</CAPTION>
+</TD></TR></TABLE></CENTER>
+<P>
+<H3>例</H3>
+
+<P>
+<P>コンテナに適当なパラメータを指定するためにサブクラスを使用して下さい。
+通常、サブクラスは次のようになります。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+class My_Dbm extends CT_Dbm {
+        var $dbm_file = "data/session.dbm";
+}
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>こうして、My_Dbm をクラス Session で使用できるようになります。
+このクラスを参照するには、"that_class" 変数に "My_Dbm" を指定して下さい。
+<P>
+<P>
+<H2><A NAME="ss3.7">3.7 CT_Ldap</A>
+</H2>
+
+<P>
+<P>
+<CODE>Session</CODE> クラスは、データベースにセッションデータを読み書きするために
+少々の SQL を使用します。
+セッションをデータベースの種類に依存しないようにするために、<CODE>Session</CODE> は
+現在記憶領域へのアクセスを常にコンテナクラスを通じて行います。
+<CODE>Session</CODE> がコンテナとして LDAP データベースを使用させるには、<CODE>CT_Ldap</CODE>
+を使用して下さい。
+<P>
+<H3>インスタンス変数</H3>
+
+<P>
+<P>
+<CENTER><TABLE BORDER><TR><TD>
+<BR>
+ldap_host</TD><TD>接続するLDAPサーバーのホスト名</TD></TR><TR><TD>
+ldap_port</TD><TD>LDAPサーバーのポート (LDAP デフォルトは 389)</TD></TR><TR><TD>
+basedn</TD><TD>LDAPのbasedn</TD></TR><TR><TD>
+rootdn</TD><TD>データベースを修正する際に必要な rootdn</TD></TR><TR><TD>
+rootpw</TD><TD>rootdn のパスワード</TD></TR><TR><TD>
+objclass</TD><TD>PHPLIBのデータに関するオブジェクトクラス</TD></TR><TR><TD>
+
+<CAPTION>アクセス可能なインスタンス変数</CAPTION>
+</TD></TR></TABLE></CENTER>
+<P>
+<H3>例</H3>
+
+<P>
+<P>コンテナに適当なパラメータを指定するためにサブクラスを使用して下さい。
+通常、サブクラスは次のようになります。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+class My_Ldap extends CT_Ldap {
+        var $classname = "My_Ldap";
+        var $ldap_host = "localhost";
+        var $ldap_port = 389;
+        var $basedn = "dc=your-domain, dc=com";
+        var $rootdn = "cn=root, dc=your-domain, dc=com";
+        var $rootpw = "secret";
+        var $objclass = "phplibdata";
+}
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>こうして、My_Ldap をクラス Session で使用できるようになります。
+このクラスを参照するには、"that_class" 変数に "My_Ldap" を指定して下さい。
+<P>
+<P>
+<H2><A NAME="ss3.8">3.8 Session</A>
+</H2>
+
+<P>
+<P>セッションクラスは、グローバルな変数名の一覧を保持し、
+これらの変数をデータ記憶用コンテナ(簡略化するため、これをコンテナと呼びます)
+からロードあるいは保存するための一連の関数を提供します。
+名前のある変数は、スカラー変数(文字列、整数、小数)または配列となります。
+
+オブジェクトも同様に処理され、そのクラス名とその (永続的な) スロットを列挙する2つの
+インスタンス変数の実装を提供します。
+<P>
+<H3>インスタンス変数</H3>
+
+<P>
+<P>
+<CENTER>
+<TABLE BORDER><TR><TD>
+classname</TD><TD>シリアル化のヘルパー: このクラスの名前。</TD></TR><TR><TD>
+magic</TD><TD>ID生成の際に使用される秘密の文字列。これを変更して下さい!</TD></TR><TR><TD>
+mode </TD><TD>セッションID伝達の方法。<CODE>cookie</CODE>または<CODE>get</CODE>のどちらか。</TD></TR><TR><TD>
+fallback_mode</TD><TD><CODE>$mode</CODE>が動作しない場合のセッションID伝達のモード。
+<CODE>$mode</CODE> を <CODE>cookie</CODE> に、<CODE>$fallback_mode</CODE> を 
+<CODE>get</CODE>に設定して下さい。</TD></TR><TR><TD>
+lifetime </TD><TD>セッションクッキーの有効期間を分で、また、セッションクッキーを
+使用するには 0 を指定します。</TD></TR><TR><TD>
+gc_time</TD><TD>ガーベッジ・コレクション設定パラメータ。以下を参照して下さい。</TD></TR><TR><TD>
+gc_probability</TD><TD>ガーベッジ・コレクション設定パラメータ。以下を参照して下さい。</TD></TR><TR><TD>
+allowcache</TD><TD>セッションページのキャッシングを制御します。<CODE>no</CODE>
+(デフォルト値)とした場合、このページはHTTP/1.1またはHTTP/1.0のもとでキャッシュが行われません。
+<CODE>public</CODE>に設定された場合、このページは HTTP/1.1 および HTTP/1.0 のもとでパブリックに
+キャッシュが行われます。<CODE>private</CODE>が設定された場合、
+このページは、HTTP/1.1 のもとでプライベートにキャッシュが行われ、HTTP/1.0 のもとではキャッシュ
+が行われません。
+</TD></TR><TR><TD>
+allowcache_expires</TD><TD>キャッシュが許可された場合、このページはここで示された分数だけ
+キャッシュされます。
+</TD></TR><TR><TD>
+that_class</TD><TD>Session は、データを保存および取得する際にこのクラス名を使用します。</TD></TR><TR><TD>
+auto_init</TD><TD>セッション作成の際にロードされるファイル。</TD></TR><TR><TD>
+secure_auto_init</TD><TD>もし全てのページが常に page_close() をコールするならば、0 に設定して下さい。
+(通常はこのようなことはありません!)</TD></TR><TR><TD>
+
+<CAPTION>アクセス可能なインスタンス変数</CAPTION>
+</TD></TR></TABLE></CENTER>
+<P>
+<CENTER><TABLE BORDER><TR><TD>
+pt</TD><TD>永続化変数の名前を保持する内部配列。</TD></TR><TR><TD>
+in</TD><TD>フラグ: 設定された場合、auto_init が実行されています。</TD></TR><TR><TD>
+name</TD><TD>セッション型のタグ(名前)。</TD></TR><TR><TD>
+id</TD><TD>現在のセッションのID。</TD></TR><TR><TD>
+that</TD><TD>コンテナのオブジェクトインスタンス</TD></TR><TR><TD>
+
+<CAPTION>内部インスタンス変数</CAPTION>
+</TD></TR></TABLE></CENTER>
+<P>
+<H3>インスタンスメソッド</H3>
+
+<P>
+<P>
+<H3>公開インスタンスメソッド</H3>
+
+<P>
+<P>
+<DL>
+<DT><B>register($varname)</B><DD><P>
+変数名で指定したグローバル変数をセッション変数として登録します。
+変数名には、スカラー変数、配列、オブジェクトを指定できます。
+オブジェクトが永続化オブジェクトとして作成されている場合、
+以下の2つのインスタンス変数を有している必要があります。
+<P>
+<DL>
+<DT><B>classname</B><DD><P>オブジェクトクラスの名前を表す文字列。
+<DT><B> persistent_slots</B><DD><P>保存する全てのオブジェクトスロットの名前を有する配列。
+</DL>
+<P>
+<DT><B>unregister($varname)</B><DD><P>
+セッション変数として登録したグローバル変数名の登録を解除します。
+指定した変数はただちに削除されず、ページの処理完了後に消去されます。
+この後、データベースに保存することはできなくなります。
+<P>
+<DT><B>is_registered($varname)</B><DD><P>
+$varname という名前の変数がセッションに登録されている場合に true を返し、
+その他の場合に false を返します。
+<P>
+<DT><B>delete()</B><DD><P>
+現在のセッションを破棄し、現在のセッションIDセッションを用いて
+put_id()を行います。
+<P>
+<CODE>delete()</CODE>が実行された後では、
+全てのセッションデータはデータベースから削除されています。
+また、セッションオブジェクトはこのページで使用できなくなります。
+結果として、<CODE>page_close()</CODE> はこのセッションではコール
+できなくなります。<CODE>delete()</CODE>を実行した後も
+セッション変数はこのページでまだ使用可能ですが、
+この後のページでは消去されます。
+<P>クッキーモードでは、HTML を出力しておらず新規のクッキーを設定できる場合、
+<CODE>delete()</CODE>をコールした後で<CODE>page_open()</CODE>
+により新規セッションを設定することができます。
+これを行うことにより、過去のセッション変数のいくつかを再登録することも
+可能です。
+また、新規セッションを定義するために<CODE>page_close()</CODE>をコールする
+ことも可能です。
+これにより、セッションを直ちに変更したり、
+前のセッションからセッションデータを選択して受け渡すことが
+可能になります。
+<P>
+<DT><B>url($url)</B><DD><P>現在のセッションを指すURLを返します。
+<CODE>get</CODE> モードを使用している場合、
+現在のセッションIDがこのURLに付加されます。
+そうでない場合、URLがそのまま返されます。
+<P>
+<DT><B>purl($url)</B><DD><P><CODE>print $this-&gt;url($url); </CODE>の省略形。
+<P>
+<DT><B>self_url()</B><DD><P><CODE>PHP_SELF</CODE> および <CODE>QUERY_STRING</CODE>情報から
+現在のページを指すURLを返します。
+<CODE>get</CODE> モードの場合、セッションIDが付加されます。
+<P>
+<DT><B>pself_url()</B><DD><P><CODE>print $this-&gt;self_url()</CODE>の省略形。
+<P>
+<DT><B>hidden_session()</B><DD><P>セッション名およびセッションIDを有する hidden フォーム要素を返します。
+<P>
+<DT><B>add_query($qarray)</B><DD><P>
+<P>GETクエリーのパラメータとして現在のURLに付加する文字列を返します。
+次のように使用することを意図しています。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+
+&lt;a href="&lt;&lt;?
+$sess->pself_url().$sess-&gt;padd_query(array("again"=&gt;"yes"))
+?&gt;"&gt; Reload&lt;/a&gt; and log in?
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>
+<DT><B>padd_query($qarray)</B><DD><P>
+<P><CODE>print $this-&gt; add_query($qarray)</CODE>の省略形です。
+<P>
+<DT><B>reimport_get_vars()</B><DD><P>
+<P>ある <CODE>FORM</CODE> 変数が永続化されているときに、
+そのフォーム変数は PHP にインポートされ、そして page_open() がコールされ、
+その新しい変数の値はデータベースから取得された値で上書きされます。
+結果として、<CODE>FORM</CODE> の値は失われます。
+<P>
+<P><CODE>track_vars</CODE> を有効にし、<CODE>HTTP_GET_VARS</CODE> に直接
+アクセスすれば、上記の問題は解決できます。この方法を推奨します。
+しかし、いくつかの古いスクリプトは、永続的な <CODE>FORM</CODE> 変数に基づいています。
+<P>
+<P>これらのスクリプトは、適当な <CODE>reimport</CODE>_x_<CODE>vars()</CODE> 関数を
+コールすることも可能です。
+これらの関数は、追跡を行う変数の配列を再び読みこみ、
+セッション変数が取得された後で、適当なグローバル変数を再び初期化
+します。
+<P>
+<P>この関数の使用は推奨されません。
+<P>
+<DT><B>reimport_post_vars()</B><DD><P><CODE>reimport_get_vars()</CODE>を参照下さい。
+<P>
+<DT><B>reimport_cookie_vars()</B><DD><P><CODE>reimport_get_vars()</CODE>を参照下さい。
+<P>
+<DT><B>set_container()</B><DD><P>この関数を直接コールすることは避けるべきです。
+この関数は、<CODE>Session()</CODE>の初期化時に<CODE>start()</CODE>関数により
+コールバックされます。
+動作を理解した人が<CODE>Session</CODE>のサブクラスでこの実装を上書きすることが
+できるように記述されています。
+<P>
+この関数は、セッションのthisインスタンスで使用されるコンテナクラスを
+作成し、開始します。
+<P>
+<DT><B>set_tokenname()</B><DD><P>
+この関数を直接コールするべきではありません。
+この関数は、<CODE>Session()</CODE> の初期化の際に<CODE>start()</CODE>関数により
+コールバックされます。
+動作が理解できた場合は、
+<CODE>Session</CODE>のサブクラスでその実装を上書きすることも可能なように
+記述されています。
+<P>この関数は、内部的なセッション名を定義し、設定します。
+<P>
+<DT><B>release_token()</B><DD><P>
+この関数を直接コールするべきではありません。
+この関数は、<CODE>Session()</CODE> の初期化の際に<CODE>start()</CODE>関数により
+コールバックされます。
+動作が理解できた場合は、
+<CODE>Session</CODE>のサブクラスでその実装を上書きすることも可能なように
+記述されています。
+<P>この関数は、現在のセッションの伝達の方法を定義し、
+新規のセッショントークンを生成する必要があるかどうかを定義します。
+<P>
+<DT><B>put_headers()</B><DD><P>
+この関数を直接コールするべきではありません。
+この関数は、<CODE>Session()</CODE> の初期化の際に<CODE>start()</CODE>関数により
+コールバックされます。
+動作が理解できた場合は、
+<CODE>Session</CODE>のサブクラスでその実装を上書きすることも可能なように
+記述されています。
+<P>この関数は、セッションにより生成されるヘッダー行(キャッシュ制御用のヘッダを含む)
+を定義します。
+</DL>
+<P>
+<H3>内部インスタンスメソッド</H3>
+
+<P>
+<P>
+<DL>
+<DT><B>get_id()</B><DD><P><CODE>get_id()</CODE>を参照下さい。
+<P>
+<DT><B>get_id($id_to_use)</B><DD><P>get_id() は、セッションIDを定義するために内部的に
+使用されます。現在、セッションIDは32文字の16進数(128ビット)であり、
+推定を困難とするためにmd5(uniqid($this->magic))により生成されます。
+<P>get_id() はパラメータとして使用するためにオプションでセッションIDを
+付けてコールすることが可能です。この機能は、
+セッションを壊すことなくセッションIDを変更したい場合に便利です。
+<P>セッションIDの作成方法を別のものに変更したい場合には、
+get_id() をサブクラスにより上書きすることが可能です。
+例えば、(例えばゲストブックといった)いくつかのアプリケーションでは、
+永続的な変数の共有領域を使用するために
+クライアントに伝播されない固定したセッションIDを使用することが望まれます。
+これらのアプリケーションは、(間もなく実装される)ロックを行うことが必要です。
+<P>
+<DT><B>put_id()</B><DD><P>put_id() はあるセッションを"使用不可"とする
+ために内部的に使用されます。
+現在、この関数はクライアント側のクッキーを削除し、
+そのクッキーに関する $HTTP_COOKIE_VAR[$this->name] を削除します。
+変数 ${$this->name} は削除されません。
+<P>
+<DT><B>serialize($prefix, &amp;$str)</B><DD><P>serialize() は、
+prefix という名前の変数を再構築するために必要な PHP コードを
+strに付加するために内部的に使用されます。
+<P>
+<DT><B>freeze()</B><DD><P>freeze() は、
+register() が行われた全ての変数を並べて
+現在のセッションIDおよびセッション名をタグとして
+結果をデータベースに書きこみます。
+<P>
+<DT><B>thaw()</B><DD><P>thaw() は、データベースから
+現在のセッションIDおよびセッション名で
+freeze() が行われた一連の変数をロードし、それらの変数を再度作成します。
+<P>
+<DT><B>gc()</B><DD><P>
+<CODE>active_sessions</CODE> テーブルは、各セッション毎に1行分のデータを有しています。
+その行は、<CODE>sid</CODE> および <CODE>name</CODE>の値で一意に指定することが可能です。
+(<CODE>name</CODE> は、その行を書いたセッションクラスの名前です。)
+行が書きこまれる度に、カラム <CODE>changed</CODE> が現在の時間で更新されます。
+<P>
+gc() 関数は、分単位の時間<CODE>gc_time</CODE> よりも古く、 <CODE>name</CODE> フィールドが
+一致する全ての行を削除します。
+応答を早くするために、gc() は <CODE>active_sessions</CODE> への更新が行われる度に
+コールされず、代わりに <CODE>gc_probability</CODE> の確率でランダムにコールされます。
+<P>
+<DT><B>reimport_any_vars($arrayname)</B><DD><P>
+3つの reimport 関数を実装するために使用されます。
+<P>
+<DT><B>start()</B><DD><P>
+初期化関数であり、オブジェクトのインスタンス作成後にコールされます。
+この関数は、get_id() により現在のセッションIDを取得し、データベースに接続した後、
+thaw() をコールして全てのセッション変数をロードします。
+gc() をランダムにアクティブにします。
+ブラウザのキャッシュを制御する際に適当なヘッダーを送るために
+<CODE>allowcache</CODE>を確認します。
+<P>
+</DL>
+<P>
+<P>
+<H3>例</H3>
+
+<P>使用するセッション用の適当なパラメータを与えるためにサブクラスを使用して下さい。
+通常、サブクラスは次のようになります。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+class My_Session extends Session {
+  var $classname = "My_Session"; ## 永続化をサポートする
+  
+  var $mode      = "cookie";
+  var $lifetime  = 0;            ## セッションクッキーを使用する
+  
+  ## 使用するコンテナの種類
+  var $that_class = "Session_sql";
+}
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>
+<CODE>DB_Sql</CODE>のサブクラスを定義する際に、
+データベースにアクセスする際に必要なパラメータを指定する
+必要があったことを思い出してください。
+<P>セッションサブクラスを使用するには(上述の)ページ管理用関数
+を使用して下さい。セッション管理用の機能の名前は、<CODE>sess</CODE>
+です。sess 機能へのパラメータとして次のように
+セッションサブクラスの名前を指定してください。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+  page_open(array("sess" =&gt; "My_Session"));
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>
+永続化変数を登録するには、
+インスタンスメソッド<CODE>register()</CODE> を使用して下さい。
+<CODE>$sess</CODE> がセッションオブジェクトの場合、
+永続的なグローバル変数<CODE>$s</CODE>を作成するには、次のように
+して下さい。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+$sess-&gt;register("s");
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<CODE>$s</CODE> は、スカラー、配列、永続性をサポートするスロットを有する
+オブジェクトとすることが可能です。
+<P>インスタンスメソッド <CODE>freeze()</CODE> および <CODE>thaw()</CODE>を
+直接使用してはいけません。代わりに
+ページ管理用関数を使用して下さい。
+<P>
+いくつかのページはキャッシュされ、その他のページはキャッシュされない場合、
+セッションオブジェクトのインスタンスを複数使用して下さい。
+例えば、キャッシュされる必要があるページでは、次のようなセッションオブジェクト
+インスタンスを使用して下さい。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+class My_Cached_Session extends My_Session {
+  ## このセッションインスタンスを使用するページはキャッシュされます。
+  var $allowcache = "private";
+}
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>
+キャッシュオプション <CODE>public</CODE> を使用する際には注意して下さい。
+パブリックにキャッシュされたページは、未認証のユーザーにもアクセスできる
+可能性があります。
+キャッシュオプション <CODE>private</CODE> は未認証のアクセスを防止しますが、
+HTTP/1.1 対応のブラウザでしか動作しません。
+<P>
+<H3>"auto_init" の使用法</H3>
+
+<P>
+<P>
+Session のサブクラスにおいてインクルードファイルの名前を
+<CODE>$sess->auto_init</CODE> に定義することも可能です。
+慣習により名前 <CODE>setup.inc</CODE> が使用されます。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+class My_Session extends Session {
+  var $classname = "My_Session";
+  var $magic     = "Calvin+Hobbes";
+  var $mode      = "cookie";
+  var $gc_probability = 5;
+
+  var $auto_init = "setup.inc";   // auto_init ファイルの名前。
+}
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>
+新規セッションが開始される度、つまり、
+セッションIDがないユーザーがアプリケーションに接続を行う度に、
+auto_init ファイルが読みこまれ、1度だけ実行されます。
+このファイルは、グローバルコンテキスト中ではなく、
+<CODE>page_open()</CODE> のコンテキストの中から実行されます。
+auto_init ファイルからグローバル変数を定義あるいはアクセスするには、
+<CODE>global</CODE> を指定する必要があります。
+<P>auto_init が実行された場合、そのページの全機能は既に定義されており、
+グローバルに利用可能です。
+これにより、アプリケーションで使用する変数
+<CODE>$sess</CODE>, <CODE>$auth</CODE>, <CODE>$perm</CODE>,
+<CODE>$user</CODE> が存在することを前提にすることが可能です。
+どのページが auto_init を起動したのかを知ることは通常できないことに
+注意して下さい。
+認証を要求するページが複数あり、認証を行わないページもある場合、
+一般に <CODE>$auth</CODE> が存在することを前提にすることはできず、
+その変数にアクセスする前に<CODE>is_object($auth)</CODE>により
+存在を確認する必要があります。
+<P>
+auto_init ファイルを初期化を行う際に使用する場所に置き、
+使用する全てのセッション変数を登録して下さい。
+<CODE>setup.inc</CODE> の一例は次のようになります。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+&lt;?php
+global $lang;   // アプリケーション言語
+$lang = "de";   // デフォルトの言語はドイツ語
+$sess-&gt;register("lang");
+
+global $cur;   // アプリケーションの通貨
+$cur = "EUR";   // デフォルトの通貨はユーロ
+$sess-&gt;register("cur");
+
+global $cart;
+$cart = new Shop_Cart;      // local.inc で定義されたショッピングカートオブジェクトを作成
+$sess-&gt;register("cart"); // セッション変数を登録します
+?&gt;
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P><EM>注意:</EM> 
+fallback_mode を使用しておらず、ユーザークッキーをオフにした場合、
+アプリケーションの各ページをヒットする度に新しいセッションを開始することを
+ユーザーは強制されます。
+もちろん、各ページを参照する度に<CODE>setup.inc</CODE> を読みこんで実行する
+ことにもなります。この問題に対処することは不可能です。
+<P>
+<H3>変数登録の解除とセッションの削除</H3>
+
+<P>永続化変数を削除するには、その変数の名前を指定して<CODE>$sess-&gt;unregister()</CODE>
+をコールします。unregister をコールした後も以前に登録した変数の値はまだ利用可能
+ですが、この変数はもはや永続化変数ではなく、現在のページを終了した時点で
+失われます。
+<P>データベース内のセッションレコード、現在のセッションID、
+ユーザーのブラウザにあるセッションクッキーを含むセッションに関係する全ての
+データを削除するには、<CODE>$sess-&gt;delete()</CODE>をコールして下さい。
+ショッピングアプリケーションにおいては、買いたい品物を引き渡すために
+現在の買い物カゴおよびそれ以外の全てを取り除く際に
+このようなことが一般に行われます。
+しかしながら、ユーザーが選択した情報を以下のように記憶したいと思うかもしれません。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+&lt;?php
+  page_open(array("sess" =&gt; "Shop_Session"));
+
+  // 注文をメールで送ります
+  mail_order($shopowner, $user, $cart);
+
+  // 現在のセッションを削除します
+  $sess->delete();
+
+  // 新規にセッションIDを取得しますが、ユーザーのアドレスと名前は前の値を
+  // 保持します:
+  page_open(array("sess" =&gt; "Shop_Session")); // auto_init を強制的に再実行します!
+  $sess->register("user");  // 同様にauto_initでも行うことが可能です。
+
+?&gt;
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>
+<H3>デバッグ用にセッションデータを読みこみ、調べる</H3>
+
+<P>PHPLIBアプリケーションをデバッグする際に、active_sessionテーブルの
+内容を読んで理解することができると便利なことが多いです。
+このテーブルでは、各セッションが1行分のデータとして表されています。
+このテーブルのプライマリ・キーは、<CODE>name</CODE> および <CODE>sid</CODE> の組です。
+<CODE>name</CODE> は <CODE>$this-&gt;name</CODE> の内容であり、通常は
+使用するセッションクラスのクラス名です。
+<CODE>sid</CODE> は <CODE>$this-&gt;id</CODE> の内容であり、
+通常は uniqid による MD5 ハッシュおよび他のユニークな文字列です。
+<P>ある組み合わせを選ぶことにより PHPLIB でアプリ―ケーション毎に
+複数のセッション型(例えばセッションとユーザーデータ、以下に示す <CODE>User</CODE>
+クラスを参照) を保持し、全てのデータを1つのテーブルに保存することが可能です。
+<CODE>Example_Session</CODE> のようなセッションクラスをデバッグする場合には、
+関連するレコードは、<CODE>name = "Example_Session"</CODE> となるものに限定されます。
+<CODE>$sess->id</CODE> を出力することにより、
+<CODE>Example_Session</CODE> の現在のセッションIDを定義し、
+データベースから <CODE>name</CODE> と <CODE>sid</CODE> を有するレコードを
+選択して下さい。
+<P><CODE>changed</CODE> フィールドはこのレコードが最後に更新された時間を
+示しています。このフィールドは YYYYMMDDhhmmss というフォーマットの
+14 文字 (Y2K対応) の文字列です。
+<CODE>changed</CODE> で降順にソートすることにより、
+最新のセッションレコードを先頭に表示することが可能です。
+(ここでは、MySQL の "limit" 文を使うと便利です)
+<P>セッションレコードの <CODE>val</CODE> 列には、
+安全のため最初に <CODE>stripslashes()</CODE> を実行し、その後、
+<CODE>eval()</CODE> を実行する PHP プログラムが含まれています。
+この PHP プログラムは、複数の代入文からなり、
+永続化変数を再生成する際に必要な全ての命令を有しています。
+構造とこのプログラムにおける命令の順番は、常に同じです。
+<P>最初のアイテムは常に <CODE>$this-&gt;in</CODE> に代入されます。
+1 に設定されている場合、auto_init はこのセッションで既に実行されています。
+1 に設定されていない場合、auto_init はまだ実行されていません。
+これは、auto_init ファイルがこのセッションに関して未定義である
+ためであると推定できます。
+<P>
+<CODE>$this-&gt;pt = array();</CODE> のようなコードを実行した後、
+<CODE>$this-&gt;pt["文字列"] = 1;</CODE> のように配列への代入を行います。
+各「文字列」は、登録される変数の名前です。
+変数の登録にはそれ自体に永続性があり、配列 <CODE>$this-&gt;pt</CODE>
+により保存されます。
+該当する変数が設定されていない場合でも、登録の解除またはセッションの削除が
+行われるまで登録・保持することは可能です。
+配列 pt の内容が、セッションに現在登録されている変数となっているか
+を確認下さい。
+<P>
+最後に、変数の実際の内容が保存されます。
+この保存は、配列 $GLOBALS にアクセスし、永続化変数を構成する
+スカラー値を順番に作成することにより行われます。
+スカラー値に関しては、
+<CODE>$GLOBALS[somevar] = "value";</CODE>
+のようなコードとなります。
+<P>配列については、まず <CODE>$GLOBALS[someary] = array();</CODE>
+が生成されます。
+続いて、配列を構成するスカラー値が次のようなコードで書きこまれます。
+<CODE>$GLOBALS[someary][index] = "value"</CODE>
+<P>オブジェクトに関しては、オブジェクトインスタンスを作成するコード
+が保存されます。
+<CODE>$GLOBALS[someobj] = new Classname;</CODE>
+"Classname" は、オブジェクト <CODE>$classname</CODE> による
+ものであり、コンストラクタが正常に動作する必要があります。
+続いて、
+オブジェクトの配列 <CODE>persistent_slots</CODE> の内容に基づき、
+次のように保存されるスカラーが書きこまれます。
+<CODE>$GLOBALS[someobj]-&gt;slot = "value";</CODE>
+<P>データベースに保存された値を見たい場合には、
+単にそのセッションに関する <CODE>$GLOBALS</CODE> の値を見る
+ことになります。
+<P>
+<H3>"serialize()" の動作</H3>
+
+<P>
+<P>以下の情報は、ライブラリの開発者、つまり、PHPLIB の
+内部的動作を変更しようとする者、にのみ適用されます。
+このセクションを読みとばしても問題ありません。
+ここで示すいくつかの情報は、PHP 言語に精通していることを必要とします。
+<P>sessionクラスの中心は、内部関数 <CODE>serialize()</CODE> です。
+この関数は、式 prefix を引数とし、実行時に式にその式の値を代入するような
+PHP コードを生成します。
+例えば、式が <CODE>$GLOBALS["a"]</CODE> で、グローバル変数 <CODE>$a</CODE>
+が値 <CODE>17</CODE> を有するとすると、serializeは、PHP プログラム
+<CODE>$GLOBALS["a"] = "17";</CODE> を作成します。
+メモリを節約するために、<CODE>serialize()</CODE> は参照パラメータ
+<CODE>$str</CODE> に生成されたコードを付加する場所として実行します。
+
+<P>まず最初に <CODE>serialize()</CODE> は、PHP関数 <CODE>gettype()</CODE> を用いて
+現在の式の型を定義します。
+カレントの型は、<CODE>$t</CODE> に保存されます。
+式の型はスカラー値(整数、浮動小数、文字列)、配列、オブジェクトのどれであるかを
+示しています。
+<P>スカラー値の場合は処理が最も容易です。<CODE>serialize()</CODE> では、
+現在の式を評価し、結果の値を <CODE>$l</CODE> に記録するだけです。
+現在の値を現在の式に代入するような代入式が生成されます。
+
+現在の値が文字列となることもあり得ます。
+その文字列に(バックスラッシュ、2重引用符、ドル記号といった)不適当な文字
+が含まれている場合には、これらの文字の前にバックスラッシュが付加されます。
+スカラーの場合、<CODE>serialize()</CODE> の動作はこれで完了します。
+<P><CODE>$t</CODE> が配列の場合、空の配列を作成するコード
+(<CODE>expression = array();</CODE>) が生成されます。
+つづいて現在の式のキーの数が計算され、各キーについて
+キーを式に追加した上で <CODE>serialize()</CODE> が再帰的にコールされます。
+これにより、各配列スロットに関するコードが追加されます。
+<P><CODE>$t</CODE> がオブジェクトの場合、そのオブジェクトを作成する
+コード (<CODE>expression = new Classname;</CODE>) が生成されます。
+PHP においては任意のオブジェクトに関してオブジェクトのクラス名
+を知ることはできないため、<CODE>serialize()</CODE> に処理されるオブジェクトは 
+<CODE>classname</CODE> という名前のスロットを有している必要があります。
+オブジェクトハンドラはオブジェクトスロット <CODE>persistent_slots</CODE>
+の内容を調べ、各オブジェクトスロットについて
+適当なプレフィックスを付けて再帰的に <CODE>serialize()</CODE> をコールします。
+<P><CODE>serialize()</CODE> で使用される多くの式においては
+変数名や場合によってはコードを可変とすることが必要となるため、
+<CODE>eval()</CODE> が大量に使用されます。
+これにより、コードの可読性が悪化してしまいます。
+<P>
+<H2><A NAME="ss3.9">3.9 認証 (Auth)</A>
+</H2>
+
+<P>
+<P>認証管理はセッションを認証するために使用することが可能です。
+この目的は、セッションのクライアント側にいるユーザーを特定することです。
+<P>認証は、(.htaccess で保護されたページをアクセスした際に
+ブラウザのポップアップウインドウを用いて行われる) HTTP 認証ではなく、
+HTMLフォームを使用してインラインで行われます。
+インライン認証は、HTTP 認証に比べて以下のような複数の利点があります。
+<P>
+<UL>
+<LI>認証を解除できます：セッションは認証未了状態になることができ、ユーザーが「ログアウト」
+することができます。</LI>
+<LI>有効期限を設定できます：セッションは一定時間のアイドル状態の後、自動的に
+認証未了状態にすることができます。
+</LI>
+<LI>カスタマイズができます：ユーザー名とパスワードの組に限定されません。
+これらの代わりにログインのために顧客番号、オペレータID、そしてパスワードを用いることもできます。
+また、ロゴを入れた通常のHTMLページとしてログオン画面を完全に自由に作成でき、
+意のままに構成することが可能です。</LI>
+<LI>データベースに基づきます。認証は htpasswd テキストファイルではなく、
+各自の設計によるデータベースに対して行われます。</LI>
+<LI>ページ毎に設定できます。ページ毎を基本に認証が必要なページとそうでないページを決定できます。
+</LI>
+<LI>ユーザ認証のみでなく自己登録もできます。<em>登録</em>モードでは、有効なログインが
+できなかったユーザーは登録を促され、アカウントが作成されます。</LI>
+<LI>CGI PHPと併用が可能です。HTTP認証は、mod-phpにおいてのみ使用可能です。</LI>
+<LI>許可属性チェックの枠組みと統合されています。</LI>
+</UL>
+<P>
+<H3>インスタンス変数</H3>
+
+<P>
+<P>
+<CENTER><TABLE BORDER><TR><TD>
+<BR>
+classname</TD><TD>シリアル化の補助変数: このクラスの名前。</TD></TR><TR><TD>
+persistent_slots</TD><TD>シリアル化の補助変数：全ての永続的スロットの名前</TD></TR><TR><TD>
+lifetime</TD><TD>認証解除するアイドル時間の上限。0 に設定すると認証は解除されない
+(セッションがアクティブの間)</TD></TR><TR><TD>
+refresh</TD><TD>認証情報(permsなどのような)が <code>auth-refreshlogin()</code>
+メソッドを呼び出してデータベースから再読み込みされるまでの上限の時間。0 に設定すると
+認証情報はログインステージでのみ読まれる。</TD></TR><TR><TD>
+mode</TD><TD>認証モード:<code>log</code> または <code>reg</code> (以下を参照）</TD></TR><TR><TD>
+database_class</TD><TD>クラス名。Auth はデータベースコネクションを作成する際
+このクラスを使用する。</TD></TR><TR><TD>
+database_table</TD><TD>セッション変数を保存するのに用いるデータベーステーブル。</TD></TR><TR><TD>
+magic</TD><TD>uniqid を生成するのに用いられる任意の値</TD></TR><TR><TD>
+nobody</TD><TD>フラグ:true ならばデフォルト認証を使用する。</TD></TR><TR><TD>
+cancel&thinsp;login</TD><TD>ログインフォームをキャンセルするために用いることが
+できるボタンの名前。</TD></TR><TR><TD>
+
+<CAPTION>アクセス可能なインスタンス変数</CAPTION>
+</TD></TR></TABLE></CENTER>
+<P>
+<CENTER><TABLE BORDER><TR><TD>
+<BR>
+db</TD><TD>内部変数:データベースコネクションオブジェクトインスタンス</TD></TR><TR><TD>
+auth</TD><TD>内部変数:ユーザー認証情報、下記参照</TD></TR><TR><TD>
+in</TD><TD>内部変数:デフォルト認証モードで使用される</TD></TR><TR><TD>
+
+<CAPTION>内部インスタンス変数</CAPTION>
+</TD></TR></TABLE></CENTER>
+<P>
+<H3>インスタンスメソッド</H3>
+
+<P>
+<P>
+<H3>公開インスタンスメソッド</H3>
+
+<P>
+<P>
+<DL>
+<DT><B>url()</B><DD><P>  
+<code>auth_loginform()</code>と<code>auth_registerform</code>において使うことができる関数。
+フォームタグにとって適切な&quot;action=&quot;を返す。
+<P>
+<DT><B>purl()</B><DD><P>  
+<code>auth_loginform()</code>と<code>auth_registerform</code>で使用できる関数。
+フォームタグにとって適切な &quot;action=&quot; を表示する。
+<P>
+<DT><B>login_if($t)</B><DD>
+<P>現在の用いられているユーザー識別情報を、他のユーザー識別情報に変更するために使用できる関数。
+以下のデフォルト認証の使用についての章と例を参照。
+<P>
+<DT><B>unauth($nobody = false)</B><DD>
+<P>この関数は<code>$this-&gt;auth</code>で認証情報を破棄します。
+これによって次回保護されているページが読み込まれるときに、ユーザーに再度ログインすることを強制します。
+<P><code>$this-&gt;auth[&quot;uname&quot;]</code> は保持されるため、
+正しいユーザー名をデフォルトで利用可能です。
+<P>バージョン6以降：ユーザーに`nobody'の証明を付与するには、unauthへの最初のパラメーターとして
+trueを渡します。これは <code>$this-&gt;auth[&quot;uname&quot;] </code>も変更します。
+<P>バージョン7.2 以降：$nobodyをこのメソッドに渡すことは止めてください。
+<P>
+<DT><B>logout($nobody = $this-&gt;nobody)</B><DD>
+<P>この関数は <code>$this-&gt;auth</code> 中の全ての認証情報を破棄し、次回保護されている
+ページを読み込むときにユーザーに再ログインを強制します。
+<P>ほとんどのアプリケーションでは、<code>$this-&gt;unauth()</code>の方が使用されます。
+<P>バージョン6以降：
+ユーザーに`nobody'の証明を付与するには、logoutへ最初のパラメーターとしてtrueを渡します。
+これによりクラスの定義(<code>$nobody</code>)で指定した値へと戻されます。
+<code>logout()</code>は<code>unauth()</code>を(<code>$nobody</code>を引数として)コールするので、
+動作は同じです。
+(ただし、<code>logout()</code>は常に<code>$this-&gt;auth[&quot;uname&quot]</code>をクリアーし、
+authクラスの登録を解除します)
+<P>バージョン7.2 以降：$nobodyをこのメソッドに渡すことは止めてください。
+<P>
+<DT><B>is_authenticated()</B><DD>
+<P>現行の認証が無効であったり、期限切れのときにfalseを返します。
+それ以外の場合は認証済み UID を返します。
+<P>
+<DT><B>auth_preauth()</B><DD>
+<P>
+この関数は、Auth のサブクラスでオーバーライドすることが可能です。
+この関数は認証プロセスの先頭でコールされ、ログインフォームを表示せずに
+(必要な全ての情報をテレパシーを用いて導出して、あるいはクッキーを使用することで、
+またあるいは死んだリスの近親相姦からユーザーIDを占って)ユーザー認証を行う機会を設定します。
+<P>
+この関数がUIDを返し場合、ユーザーは認証済みであり、auth_loginform()も
+auth_validatelogin()もコールされません。falseが返された場合、全て通常どおりの動作となります。
+<P>
+<DT><B>auth_loginform()</B><DD><P>
+この関数は、Auth のサブクラスにおいてオーバーライドしなければなりません。
+この関数は、ユーザー用のログイン画面を生成するHTMLを出力するべきです。
+HTMLファイルを組み込む際にはinclude()文を使用することをお勧めします。
+<P>
+<DT><B>auth_validatelogin()</B><DD>
+<P>この関数はユーザーが<code>auth_loginform()</code>で生成されたログインフォームを
+送信する際にコールされます。この関数は、ユーザーの入力を検証しなければなりません。
+<P>ユーザーの認証に成功した場合、インスタンス変数<code>$auth[]</code>の以下に示す
+複数のフィールドを設定する必要があります。
+<P>
+<DL>
+<DT><B>"uid"</B><DD>
+<P>ログインしたユーザーのユーザーIDを有する必要があります。
+<DT><B>"uname"</B><DD>
+<P>ログインしたユーザーのユーザー名を有する必要があります。
+<DT><B>"exp"</B><DD>
+<P>変更してはいけません。(フィールドは <code>start()</code> によって維持されており、
+ログインが終了する時間を保持します)
+<DT><B>"perm"</B><DD>
+<P>許可属性機能を使いたいなら、ここに認証済みのユーザーの許可属性を格納して
+おかなければなりません。
+(ヒント：sybase と名前が衝突するため、&quot;perm&quot; は全てのデータベーステーブルに
+おいて&quot;perms&quot;と呼ばれます。この小さな差異を探しましょう!)
+</DL>
+<P>さらなる情報は以下の例を参照して下さい。
+<P>
+<DT><B>auth_refreshlogin()</B><DD>
+<P>この関数は、各<code>refresh</code>分おきにコールされます。
+この関数は、<code>auth_validatelogin()</code>メソッドによって配列<code>auth</code>に
+格納された認証情報を更新します。ユーザーがnobodyとしてログインした場合にはコールされません。
+<P>認証が成功したらtrue、そうでなければfalseを返します。
+(即ち: userid はもはや有効ではありません。)
+<P>
+<DT><B>auth_registerform()</B><DD>
+<P>auth_doregister()を参照。
+<P>
+<DT><B>auth_doregister()</B><DD>
+<P>これらの関数は登録モードでの<code>auth_loginform()</code>と<code>auth_validatelogin()</code>
+のエイリアスです。
+</DL>
+<P>
+<H3>内部インスタンスメソッド</H3>
+
+<P>
+<P>
+<DL>
+<DT><B>start()</B><DD><P>
+<P>初期化関数であり、認証を行います。<code>log</code>(ログイン)モードにあるときは、
+ログイン画面を表示するために<code>auth_loginform()</code> がコールされます。
+ログイン画面から入力値が送信された際にログインを検証するために<code>auth_validatelogin()</code>が
+コールされます。検証が成功した場合、実際のページのコンテンツが表示され、
+そうでなければ <code>auth_loginform()</code>に戻ります。
+<P><code>reg</code>モードでは登録フォームを表示するために<code>auth_registerform()</code>が
+コールされます。登録フォームから入力値が送信された際に、ユーザーを登録しセッションを検証する
+ために<code>auth_doregister()</code>が呼び出されます。
+登録が成功した場合、実際のページのコンテンツが表示され、そうでなければ
+<code>auth_registerform()</code>に戻ります。
+</DL>
+<P>
+<H3>例</H3>
+
+<P>
+認証クラスのパラメーターを指定したり、独自の<code>auth_*</code>関数を実装するために
+<code>Auth</code>のサブクラスを使用します。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+class My_Auth extends Auth {
+  var $classname        = "My_Auth"; # オブジェクトのシリアル化サポート
+
+  var $lifetime         =  15;
+  
+  ## 使用するDB_Sqlサブクラス及びテーブル
+  var $database_class = "DB_Session";
+  var $database_table = "auth_user";
+
+  ## uidを推測しにくくするためのマジックの値。
+  var $magic = "Abracadabra";
+
+  ## 独自のログインフォームを使用
+  function auth_loginform() {
+    global $sess;
+    include("loginform.ihtml");
+  }
+  
+  function auth_validatelogin() {
+    global $username, $password;    ## loginform.ihtml からのフォーム変数
+    
+    ## もし認証が失敗したら、loginform.ihtml はセットされた 
+    ## $this-&gt;auth[&quot;uname&quot;] を見つけだし利用します。
+    $this-&gt;auth["uname"]=$username;
+    
+    ## 認証が失敗したときに返す値
+    $uid   = false;
+    
+    ## このユーザー及びパスワードの組をデータベースでチェック
+    $query = sprintf(
+      "select * from %s where username = '%s' and password = '%s'",
+      $this-&gt;database_table,
+      addslashes($username),
+      addslashes($password)
+    );
+    $this-&gt;db-&gt;query($query);
+    
+    ## 該当するユーザーが見つかったら、uid と許可属性を取り出します
+    while($this-&gt;db-&gt;next_record()) {
+      ## 必須
+      $uid = $this-&gt;db-&gt;f("uid");
+      
+      ## オプション。perm 機能用
+      $this-&gt;auth["perm"] = $this-&gt;db-&gt;f("perms");
+      ## perm 機能を使う場合、この例にあるデータベーステーブル中の
+      ## db フィールドが sysbase との名前の衝突のために &quot;perms&quot; と
+      ## 呼ばれることに注意。
+    }
+    
+    return $uid;
+  }
+}
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P><code>loginform.ihtml</code>にはログインフォームを描画するためのHTMLとPHPコードが
+含まれています。
+<code>$this-&gt;auth[&quot;uname&quot;]</code> は最初のログインの試行で空になり、
+さらなるログイン試行へとにすすみます。
+これをログイン試行の繰り返しを検知し、適切なエラーメッセージを表示するために使うことができます。
+自分のフォームのaction属性を生成するために<code>$this-&gt;url()</code> の結果を
+表示しなければなりません。
+<P>例として配布されている<code>loginform.ihtml</code>を参照してください。
+<P>
+認証サブクラスを使うためにページ管理関数(上記参照)を使用してください。
+認証管理の機能名は<code>auth</code>です。
+サブクラス<CODE>Auth</CODE>の名前を<code>auth</code> 機能へのパラメーターとして指定します。
+<code>auth</code>機能は<code>sess</code>機能を必要とします。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+  page_open(array("sess" =&gt; "My_Session", "auth" =&gt; "My_Auth"));
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>
+<H3>デフォルト認証の使用法</H3>
+
+<P>
+多くのアプリケーションではページ上のある機能を保護するため<code>$auth</code>及び<code>$perm</code>
+オブジェクトを使用するということが必要となります。それと同時にそのページにアカウント無しのユーザーが
+見ることのできる保護されていない部分を作ることも要求されます。これは一種のジレンマを生みます。
+というのも、ページの機能性を保護するには<code>$auth</code>及び<code>$perm</code>オブジェクトが
+必要ですが、デフォルトでログイン画面が表示されることは好ましくないからです。
+
+<P>デフォルト認証では、全ての許可属性チェックに常に失敗する特別なuid及びuname&quot;nobody&quot;を
+提供することでこのジレンマを解決します。
+<code>nobody</code>フラグを設定した場合、<code>$auth</code> はユーザーに認証を強制するログイン
+画面を生成せず、<code>nobody</code> として暗黙のうちに認証します。
+アプリケーションは、IDを本来のユーザーIDへと変更するための、アカウントを所持する
+ユーザーに対してログインボタンかそれに類するものを提供する必要があります。
+
+デフォルト認証を使用するには、<code>nobody</code>フラグをセットし、上で示したような
+<code>My_Auth</code> サブクラスを作成します。
+(<em>注意:</em> 2段階に拡張する必要はありません。重要なのは <code>nobody</code> フラグが
+設定されていることだけです)
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+class My_Default_Auth extends My_Auth {
+  var $classname = "My_Default_Auth";
+
+  var $nobody = true;
+}
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>デフォルト認証を使用したページを作成するには、ページ管理関数を使用します。
+<code>login_if()</code> 関数を伴う再ログイン要求をチェックしてください。また、同じページに
+再ログイン用のリンクを作成して下さい。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+&lt;?php
+  // デフォルト認証を使用
+  page_open(array("sess" =&gt; "My_Session", "auth" =&gt; "My_Default_Auth"));
+  $auth-&gt;login_if($again);
+
+  if ($auth-&gt;auth["uid"] == "nobody"):
+?&gt;
+  このページへ &lt;A HREF="&lt;?php $sess-&gt;purl("$PHP_SELF?again=yes") ?&gt;"&gt;再ログイン&lt;/A&gt;
+&lt;?php endif ?&gt;
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>
+<H3>チャレンジ-レスポンス認証の使用法</H3>
+
+<P>always does.<br>
+配布ファイル中の<code>local.inc</code> にはサンプルとしてチャレンジ−レスポンス方式を用いる
+<code>Example_Challenge_Auth</code>という名前のクラスが含まれています。クライアントブラウザが
+Javascriptをサポートしている場合、このクラスによるログイン画面はネットワークに平文の
+パスワードを送信しません。クライアントがJavascriptをサポートしていない場合、
+ログインは可能ですが、通常の <code>Example_Auth</code> が常にそうするように、
+パスワードは平文で送信されます。
+<P>
+<code>Example_Challenge_Auth</code>の実装は、PHPとJavascriptの先進的な使用法を示しており、
+また、このPHPlibクラスライブラリの柔軟性を示しています。チャレンジ−レスポンス認証方式は、
+ライブラリのコードを全く変更することなしに、<code>Auth</code> をサブクラス化することに
+より、<code>local.inc</code> の中に、完全かつ自然に実装されています。
+<P>
+<code>Example_Challenge_Auth</code>には<code>crloginform.ihtml</code>が含まれています。
+また、<code>md5.js</code>ファイルがウェブサーバのドキュメントルートディレクトリ上に
+あることが必要です。このファイルには、Henri  Torgemane 氏により作成されたMD5メッセージ
+ダイジェストアルゴリズムが実装されています。この認証方式の背後にある基本的なアイデアは
+単純です。<code>$auth-&gt;auth_loginform()</code> はこのフォームに編入されるチャレンジ値を
+生成し、この値はフォームの中に組み込まれます。ユーザーがフォームを送信する際に
+MD5("username:password:challenge") が計算され、replyフィールドに代入されます。
+パスワードフィールドは消去されます。サーバは受信したユーザー名、データベース中のパスワード、
+既知のチャレンジ値から予期されるreplyの値を計算することができます。
+そして予想されるreplyと実際のreply値を照合できます。それらが一致する場合、そのユーザーは
+認証されます。
+<P>
+replyフィールドが空白でパスワードが入力されている場合、そのクライアントでJavascriptが使用
+できないことがサーバー側で分かります。この場合にもそのユーザーは認証されますが、
+ネットワーク上でパスワードが見えてしまうことになります。
+<P>このクラスは、<code>Example_Auth</code>の代わりとなるものです。
+<P>
+<H3>認証とユーザー変数に関する詳細</H3>
+
+<P>
+<P>この機能はもともとKristian  Koehntopp氏がPHPLIBメイリングリスト用に書いたもので、
+のちに文書に加えられました。
+<P>
+<H3><code>Auth</code>クラスの通常の使用法は?</H3>
+
+<P>
+<P>通常、以下のようなコードを保護したいページの先頭に書きます:
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+&lt;?php
+page_open(array(
+    "sess" =&gt; "My_Session", 
+    "auth" =&gt; "My_Auth"));
+?&gt;
+
+&lt;!-- あなたのコードをここに --&gt;
+
+&lt;?php
+page_close()
+?&gt;
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>
+<H3><CODE>$auth</CODE>の内部動作</H3>
+
+<P>
+<P>このページにアクセスする際、まず最初に<code>page_open()</code>がコールされます。
+<code>page_open()</code>は、<code>$auth</code>という名前の<code>My_Auth</code>の
+インスタンスを生成し、初期化します。そして<code>$auth</code>はあなたが認証されて
+いないことを検出し(どのようにしてこの検出を行うかは以下で説明します)、
+<code>loginform.ihtml</code>を表示します。この後、$authの実行処理は終了します。
+このため、&lt;!-- あなたのコードをここに --&gt; が再び実行、表示されることは
+ありません。
+<P>
+ここで、ユーザーの画面には、<code>loginform.ihtml</code>の画面が表示されています。
+この画面はユーザーが本来アクセスしようとしていたページのURLにより表示されます。
+loginformはそれ自体を指すaction URLを有しています。
+<P>
+ユーザーがログインフォームに書き込んでそれを送信したときには、まったく同じURLが要求され、
+上記の<code>page_open()</code>が再度実行されます。しかし今回はユーザー名とパスワードが
+送信されます。<code>$auth</code>オブジェクトが作成され開始されると、これらの
+パラメーターを検出、検証し、NULL値または有効なユーザーidという結果になります。
+認証に失敗した場合、空のユーザーidを作成し、ログインフォームが再び表示され、
+インタープリターは終了します。この時、&lt;!-- あなたのコードをここに --&gt; の部分は
+実行されません。
+<P>UIDが返ってきた場合、そのセッションでUIDとタイムスタンプは永続化され、
+<code>$auth</code>は<code>page_open()</code>に制御を戻します。
+<code>page_open()</code>が終了した後、&lt;!-- あなたのコードをここに --&gt; の部分
+が実行または表示されます。
+ただし、パーミッションチェック(<code>$perm</code>)をオプションに指定
+した場合には、表示されない可能性もあります。
+<P>
+その後、他のページや同じページを呼び出すと、セッションデータ中のUIDとタイムスタンプの
+存在がチェックされます。UIDが存在し、タイムスタンプが適正であれば、UIDは維持され、
+タイムスタンプは更新されます。<code>page_close()</code>実行時に、両方ともユーザーの
+データベースに送り返されます。
+(注意: 認証によって保護されているページは、読込み専用としてアクセスしたときや、
+タイムスタンプが更新されていない場合でも<code>page_close()</code>することが必須です)
+<P>(<code>$auth-&gt;logout()</code>や<code>$auth-&gt;unauth()</code>コールされた時のように)
+UIDが存在しなかったり、タイムスタンプが有効期限を超過している場合、<code>$auth</code>は
+ページの表示を中断し、再度ログインフォームを表示します。
+<P><code>$auth</code>オブジェクトを含むページに入場する唯一の方法は、自分のセッション
+データ内にUID及び有効なタイムスタンプを持つことです。
+(注意：これはデフォルト認証でも成り立ちます。これらはダミーのUIDとタイムスタンプを
+ユーザーのセッションデータ中に作成します)
+<P>
+<H3>$sessと$authの関係は?</H3>
+
+<P>
+<P>
+セッションクラスの名前を有するセッションクッキーがブラウザに保存されます。
+これは、PHPLIBのコア機能を動作させる場合に、ブラウザとPHPLIBの間でやりとりされる
+唯一のデータです。
+セッションクッキーの値は、PHPLIBが生成したPHPコードを取得する際に
+<code>active_sessions</code>へのリファレンスとして使用されます。
+<code>page_open()</code>の処理の中で、このPHPコードは<code>eval()</code>により
+式として評価され、セッション変数が再生されます。
+<P>
+<code>$auth</code>オブジェクトの部分は永続化されており、<code>page_open()</code>の
+<code>$sess</code> 部分が実行されたときに取得されます。
+この操作は<code>page_open()</code>の<code>$auth</code>パートが実行される直前に行われるので、
+コールされた時に<code>$auth</code> は永続化されているデータが存在することを前提に
+することができます。
+<P>
+PHPLIBのソースを見ると、<code>$auth</code>には<code>$auth-&gt;auth[]</code>という名前のハッシュ型の
+永続的スロットが1つだけあることが分かります。このハッシュは、<code>uid</code>,<code>exp</code>,
+<code>uname</code>という複数のスロットを持っています。
+<code>$auth-&gt;auth[&quot;auth&quot;]</code> は現在認証されているユーザーIDであり、
+<code>$auth-&gt;auth[&quot;exp&quot;]</code> はそのUIDに対応する現在アクティブな
+有効期限のタイムスタンプ(Unix time_t 形式)です。
+<code>$auth-&gt;auth[&quot;uname&quot;]</code>は、通常のPHPLIBの<code>Auth</code>クラスで
+使用されているものとは全く無関係です。しかし、提供されているデフォルトの<code>Auth</code>
+サブクラスである<code>Example_Auth</code>のコンテキストとは関係があります。
+<P>したがって、<code>$auth-&gt;auth[&quot;uid&quot;] != false</code>であり、
+<code>time() &lt; $auth-&gt;auth[&quot;exp&quot;]</code>を有していれば、セッションは
+認証済みということになります。
+<P>
+<H3>問題点は？</H3>
+
+<P>PHPLIB に含まれているオリジナルの<code>Auth</code>クラスは、ログインフォームの
+外観やUIDの送信元や送信手段について何の規定もしていません。
+<code>Auth</code> の中には、今のところ上記の二つの条件以外の何かをチェックする
+コードがありません。作成者の責任において必要な条件を満たすことのできるよう
+Authのサブクラスを修正して下さい。
+<P>Auth はログインフォームの表示が必要な場合に自身が持つ関数
+<code>$auth-&gt;auth_loginform()</code>をコールし、認証を行います。
+しかし、残念なことにAuth自体においてはこの関数は空なので、実装を提供する
+必要があります。
+<code>local.inc</code>中の<code>Auth</code>のサブクラス<code>Example_Auth</code>
+の標準的な実装は以下のとおりです:
+
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+function auth_loginform() {
+  include("loginform.ihtml");
+}
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>
+そして、そのファイルにコードを作成します。このファイル用のサンプルコードが
+提供されていいますが、そのコードに制限されるわけではなく、個々要求に合った
+<code>loginform.ihtml</code> を書くことができます。
+<P>
+ログインフォームへ情報が入力され、ユーザーから返信されると、<code>Auth</code> は
+<code>$auth-&gt;auth_validatelogin()</code> をコールします。繰り返しますが、
+<code>Auth</code>自体ではこの関数は空なので、<code>Auth</code>のみでは正しく
+機能しません。
+機能させるためには、<code>Auth</code> のサブクラスを作成し、<code>local.inc</code>
+内に<code>$auth-&gt;auth_validatelogin()</code>の実装を提供しなくてはいけません。
+
+<P>
+この関数に実際にすべきことは<code>Auth</code>それ自身とは全く関係ありません。
+期待されているのは、ユーザー入力の認証データが不正な場合にはfalseを返し、
+ユーザーが認証された場合にはユーザーIDを返すということだけです。そして
+<code>Auth</code>はセッションレコード中に適切なエントリー
+((code>$auth-&gt;auth[&quot;uid&quot;]</code> 及び 
+<code>$auth-&gt;auth[&quot;exp&quot]</code>)を生成するよう面倒を見ます。
+
+
+<P>
+
+<H3>まだ理解できません! どんなコードを作成すればいいのでしょう?</H3>
+
+<P>
+<P>
+<P>
+<code>local.inc</code>から<code>Example_Auth</code>と<code>Example_Default_Auth</code>
+と<code>Example_Challenge_Auth</code>のクラスを除去して
+(参考のためコピーをその辺に残しましょう)、<code>local.inc</code>に自分のコードを
+書いてください。。
+<P>
+この文書の冒頭で示したように、<code>My_Auth</code>という名前のクラスのコードを書き、
+<code>page_open</code>をコールするときに<code>auth</code>機能への引数として
+その名前を後で使って下さい。
+コードを作成する際には、PHPLIBで永続クラスを派生させるときの基本ルールに
+従ってください。つまり、以下のようにします。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+
+class My_Auth extends Auth {
+var $classname = "My_Auth";
+// $persistent_slotsを継承しており、修正の必要も無い
+
+// 後のコードをここに挿入します
+}
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>
+次に認証の有効期限を設定してください。認証の有効期限は、
+<code>$auth-&gt;auth[&quot;exp&quot;]</code>の現在の値の将来的な生存時間を意味します。
+また、データベースコネクタクラスとユーザー名とパスワードをチェックする際に
+使用する予定のテーブルの名前を指定してください。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+  // このコードを上で示されたように挿入する
+  var $lifetime = 15;
+  var $database_class = "DB_Example";
+  var $database_table = "my_special_user_table";
+
+  // 残りのコードはここに
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>これまでの作業により、我々は<code>My_Auth</code>の基礎的な実装を手に入れました。
+足りないのは、必要な関数<code>auth_loginform()</code>と<code>auth_validatelogin()</code>
+だけです。以下の<code>auth_loginform()</code>の実装では、<code>$sess</code>をコンテキスト内で
+グローバル変数としています。(こうしたのは簡単だからです。)これにより、<CODE>$sess</CODE>
+全体にアクセス可能となります。
+また、(<code>$this</code> 経由で)<code>$auth</code>変数へアクセスすることができます。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+
+function auth_loginform() {
+  global $sess;
+  include("loginform.ihtml");
+}
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>このログインフォームは、認証をするのに必要な値を供給するためのユーザー用フォームを作成する
+ためであれば何をしようと自由です。<code>$sess</code>全体と<code>$this</code>に関係するもの
+には全てアクセスが可能です。
+<P>
+このログインフォームはユーザー用にいくつかの入力フィールドを表示します。
+例えば、姓・名・パスワードなどです。
+フォームが返信されたとき、<code>auth_validatelogin()</code> がコールされます。
+フォームの値はグローバル変数(もしくは<code>$HTTP_x_VARS[]</code>)であり、
+<code>$auth-&gt;auth_validatelogin()</code>にインポートされなければなりません。
+その上で、そのユーザー用のユニークなIDを生成する(もしくはfalse を返す)
+ためにしなければならないことをするのは自由です。
+<P>ここで、given_name、surname、passwordという名前の入力フィールドを作成するとしましょう。
+この場合、<code>$given_name</code>、<code>$surname</code>、<code>$password</code>
+をグローバルにし、<code>$uid</code>にfalseを設定してください。
+その後、ユーザテーブルにアクセスし、データベースから
+<code>$given_name</code>、<code>$surname</code>、<code>$password</code>
+が指すユーザレコードを取得する際に必要なSQLを文を作成して下さい。
+<P>
+一致する<code>$given_name</code>、<code>$surname</code>、<code>$password</code>が存在した
+場合、クエリーは成功するでしょう。この場合、(given_name, surname)の組を厳密にユニークに
+識別するuidを返してください。さもなくばfalseを返してください。
+<P>コードでは以下のようになります:
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+
+function auth_validatelogin() {
+  // 認証データをインポートする
+  global $given_name, $surname, $password;
+
+  $uid = false;
+
+  $query = sprintf("select uid
+                      from %s
+                     where given_name = '%s'
+                       and surname = '%s'
+                       and password = '%s'",
+             $this-&gt;database_table,
+             $given_name, $surname, $password);
+  // 私たちは、本当であれば、ここでaddslashes()を使うか、
+  // magic_quote を有効にしておくべきです
+
+  // $auth-&gt;db は私たちの DB_Example によるデータベース接続です。
+  $this-&gt;db-&gt;query($query);
+
+  // さあ結果をチェックしましょう。
+  while($this-&gt;db-&gt;next_record()) {
+    $uid = $this-&gt;db-&gt;f("uid");
+  }
+
+  // $uidがfalseであるか(結果なし)、
+  // カラムuidから最後に取得したデータを設定するかのいずれかです。
+
+  // とにかく設定し、制御を戻します
+  return $uid;
+}
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>さて、これで完了し、使用可能です。
+しかし、まだ改良の余地はあります。最初に許可属性データを取得していないので、
+perm機能も同時に使いたい場合でも機能しません。
+<P>
+これは次のように簡単に変更できます。<code>select uid</code>だけに実行する代わりに
+<code>select uid, perms</code>とクエリーを修正してください。もちろん、SQLを
+適当に調整することにより望ましいpermカラムをコールすることもできます。
+また、<code>$uid</code>の代入の後に1行追加します。コードは次のようになります。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+  $uid = $this-&gt;db-&gt;f("uid");
+  $this-&gt;auth["perm"] = $this-&gt;db-&gt;f("perms");
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>
+このコードは<code>$auth-&gt;auth[]</code>配列の<code>perm</code>キーに、
+取得した<code>perms</code>の値を格納します。<code>$perm</code>がコールされ、
+ユーザーの現在の許可属性を探し始めた時に備えて、その位置に格納されつづけます。
+<P>
+別の可能な改良は、ログインを試み、認証の失敗が正確に行われた際
+(<code>auth_validatelogin()</code>がfalseを返し、再度ログインフォームが表示された時)
+に表われます。ログインフォームが空白になっていますが、これは以前に<code>given_name</code>
+と<code>surname</code>のフィールドに打ち込んだデータが記憶されていないからです。
+入力したデータを記憶していれば簡単にこの値を返すことができ、ユーザーはそれを
+修正することができます。
+また、2度目、3度目...のログイン操作である場合、これを検知し、そのログインフォームの
+どこかにユーザーのタイプミスを知らせる適切なエラーメッセージを表示することも可能です。
+これらの値を格納するのに便利な場所は、永続化された<code>$auth-&gt;auth</code>配列です。
+<P>
+標準の<code>Example_Auth</code>はその値を格納するために
+<code>$auth-&gt;auth[&quot;uname&quot;]</code>フィールドを使用しますが、公式に使用されて
+いる三つのフィールド<code>uid</code>, <code>exp</code>,<code>perm</code>のうちのどれかと
+衝突しないことだけ気をつけていれば、あなたの好きなようにどのフィールドをいくつ使用しても
+かまいません。
+<P>
+グローバル変数<code>$given_name</code>と<code>$surname</code>を
+<code>$sess-&gt;register("given_name")</code>と<code>$sess-&gt;register("surname")</code>
+をコールすることによって永続変数にしようとしないでください。これらはフォーム変数なのです！
+決してフォーム変数を永続化したり、インターネット経由の未認証のユーザーを信用したり
+しないでください。
+<P>
+そして、以下のコードを "global" の行の直下に追加してください．
+
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+  $this-&gt;auth["gname"] = $given_name;
+  $this-&gt;auth["sname"] = $surname;
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>
+それから、このloginform.ihtml中の2つの変数が適切な場所にあるかチェックしてください。
+<P>
+<H3>
+コードを作成し、動作しました。理解もしました。さて、そのUIDは実際には何のために使うのですか？
+</H3>
+
+<P>
+単純にユーザーが認証されているということを示す証明と考えてください。
+各ユーザーにそれぞれ異なった証明が使用されるので、現在処理を行っているユーザーを特定できます。
+UIDは、<code>auth_user</code>テーブル(もしくは現在のアプリケーションにおいてそう
+呼ばれているもの)のプライマリキーだと考えてください。(given_name, surname)の組
+またはそれを合成したものは、プライマリキーとなる可能性があります。
+これは内部UIDの外部的な可読な(そして時にはとても長い)表現です。
+passwordフィールドは二つのキー候補のどちらに機能的に依存しています。
+<P>
+内部ユーザー ID は決してユーザーに見せてはいけません。(given_name, surname)の組の方が
+ユーザーにとってはるかに扱いやすく、覚えやすいのです。
+(自分の名前を覚えていないユーザーはきっとどっちみちアプリケーションの残りの部分を
+操作するような精神状態じゃないでしょう:-)
+<P>
+内部ユーザーIDは、アプリケーションの中で内部的にユーザーを識別する際に常に使用されます。
+UIDは固定長であり、既知の形式及び構造を持っているので、それを前提にすることができます。
+given_nameまたはsurnameは長さが未知で、任意の文字を含む可能性があるので、
+内部的にユーザーを参照する用途としては好ましくありません。
+<P>
+<H3>しかし、uid は内部的にPHPLIBで使用されているのでしょうか?</H3>
+
+<P>
+<P><code>page_open()</code>の<code>user</code>機能を利用するのであれば、つまり、
+ユーザー変数を作成するならば、そうです。
+<P>
+<code>User</code>クラスは実際には<code>Session</code>のサブクラスです。つまり、
+ユーザー変数はセッション変数にそっくりなのです。それらもまた<code>active_sessions</code>
+に蓄積されます。唯一の違いは、セッションの名前が異なるというところです。
+(<code>local.inc</code>で提供されているクラスや名前を使用する場合、
+セッションの名前は<code>Example_Session</code>の代わりに<code>Example_User</code>となります)
+<P>
+そして、<code>Example_User</code>においては、認証済みユーザーのユーザーIDは
+<code>active_sessions</code>テーブル中のセッションIDとなります。これが、
+<code>md5(uniqid("abracadabra"))</code>形式のUIDを推奨する理由です。
+
+<P>
+<H2><A NAME="ss3.10">3.10 許可属性(Perm)</A>
+</H2>
+
+<P>
+許可属性(パーミッション)の管理は、認証付きのセッションに基づいています。この管理は、
+あるページで要求される許可属性のセットと関連付けられています。
+実際のページの内容は、許可属性が全て一致するユーザーに対してのみ見えるようになっています。
+それ以外の全てのユーザーはあなたがデザインした画面を見せられます。
+
+<P>
+<H3>インスタンス変数</H3>
+
+<P>
+<P>
+<CENTER><TABLE BORDER><TR><TD>
+classname</TD>
+<TD>シリアル化ヘルパ: クラスの名前
+</TD>
+</TR><TR>
+<TD>permissions</TD>
+<TD>(name, permission bit) の組み合わせのハッシュです。
+</TD></TR><TR><TD>
+
+<CAPTION>アクセス可能なインスタンス変数</CAPTION>
+</TD></TR></TABLE></CENTER>
+<P>
+<H3>インスタンスメソッド</H3>
+
+<P>
+<P>
+<H3>公開インスタンスメソッド</H3>
+
+<P>
+<P>
+<DL>
+<DT><B>check($required)</B><DD>
+<P>
+認証済みユーザーが<code>required</code>で明示されている全ての権利を持っているかどうかを
+チェックします。そうでない場合、<code>perm_invalid()</code>がコールされます。
+<P>
+一つ以上の要求された権利又はユーザー権利が不正の場合、(permissionハッシュの中に
+見つけることができなければ)<code>perm_invalid()</code>が同様にコールされます。
+<P>
+<DT><B>have_perm($required)</B><DD>
+<P>
+<code>check()</code>の使い方と同様に、ユーザーが適切な権限を持たなくても、セッションを
+中断することはしません。この関数は、ユーザーが必要な権限を持っていたらtrueを、
+そうでなければfalseを返します。
+<P>
+<DT><B>perm_sel($name, $current = "", $class = "")</B><DD>
+<P>この関数は、指定した<code>name</code>を有する<code>SELECT</code>タグを返します。
+このタグの中に<code>$perm-&gt;permissions</code>から得られる全ての利用可能な
+許可属性の値が<code>OPTION</code>タグとして含まれます。
+<P>
+<code>current</code>の値を指定した場合、<code>current</code>に一致する許可属性の値は
+<code>SELECTED</code>となります。<code>class</code>の値を指定した場合、タグには、
+CSSスタイルシートクラスclassが指定されます。
+<P>
+</DL>
+<P>
+<H3>内部インスタンスメソッド</H3>
+
+<P>   
+<P>
+<DL>
+<DT><B>permsum($rights)</B><DD>
+<P>
+全ての権限の論理和を計算し、<code>(valid, or_result)</code> の組を返します。
+validがtrueの場合、<code>or_result</code>が提供されます。validがfalseの場合、
+<code>or_result</code>は未定義であり、一つ以上の権限が無かったことになれます。
+これは重大なエラーであり、アプリケーションは直ちに停止させられるべきです。
+<P>
+<DT><B>perm_invalid($does_have, $must_have)</B>
+<DD><P>
+アクセス例外のときにコールされます。<code>does_have</code>はそのユーザーが実際に
+持っている権利をリストした文字列です。<code>must_have</code> はページが要求する権利です。
+</DL>
+<P>
+<H3>例</H3>
+
+<P>
+<P>
+ここでは、permissionクラスへパラメータを指定し、<code>perm_invalid</code>関数を実装するために
+<code>Perm</code>のサブクラスを使用します。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+class My_Perm extends Perm {
+  var $classname = "My_Perm";
+  
+  var $permissions = array (
+    "user"          =&gt; 1,
+    "author"        =&gt; 2,
+    "editor"        =&gt; 4,
+    "moderator"     =&gt; 8,
+    "admin"         =&gt; 16
+  );
+  
+  function perm_invalid($does_have, $must_have) {
+    global $perm, $auth, $sess;
+    
+    include("perminvalid.ihtml");
+  }
+}
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>
+permissionサブクラスを用いるために(前期の)ページ管理関数を使ってください。
+許可属性管理のための機能の名前は<code>perm</code>機能です。<code>Perm</code>の
+サブクラスの名前を<code>perm</code>機能へのパラメータとして指定してください。
+<code>perm</code>機能は<code>sess</code>機能及び<code>auth</code>機能を必要とします。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+  page_open(array("sess" =&gt; "My_Session", "auth" =&gt; "My_Auth", "perm" =&gt; "My_Perm"));
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>ページを保護するために<code>check()</code>インスタンスメソッドを用いてください。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+  $perm-&gt;check("admin");  ## このページは管理者権限をもつユーザーだけのもの。
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>
+ページ上で保護された機能を作成するために<code>have_perm()</code>を使ってください。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+&lt;?php
+  if ($perm-&gt;have_perm("admin")):
+ ?&gt;
+  &lt;h1&gt;管理者専用の機能&lt;/h1&gt;
+&lt;?php
+  endif;
+ ?&gt;
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>
+<H3>許可属性の動作 </H3>
+
+<P> 
+<P>
+<code>Perm</code>のサブクラスは、許可情報をビットパターンに変換した配列
+<code>$permissions</code>を定義します。例えば、配布されている<code>local.inc</code>
+で定義されている<code>Example_Perm</code>では、
+<code>name</code>、<code>author</code>、<code>editor</code>、
+<code>supervisor</code>、<code>admin</code>という名前を定義していますが、
+これらは全て単一のビットセットを持つビットパターンへと変換されます。
+<P>
+ユーザーは、<code>auth_user</code>テーブルの<code>perms</code>列に、許可属性名の
+コンマ区切りリスト(空白なし！)として任意の個数の許可属性を割り当てることができます。
+そのユーザーの実際に有効な許可属性はこれらの許可属性のビットパターンの論理和に
+よって決定されます。
+<P>
+ページでは、<code>$perm-&gt;check()</code> 関数に許可属性名のコンマ区切りリスト
+(これも空白なし！)を指定し、任意の許可属性を要求することが出来ます。
+必須の許可属性もまたこれらの許可属性のビットパターンの論理和を取ったものによって定義されます。
+同様に、ページ関数は<code>$perm-&gt;check()</code>により必要な権限により
+保護することができます。
+<P>
+認証済みユーザーの有効な許可属性が必要な全てのビットセットを持っている場合、
+保護されたページまたはページ関数へのアクセスが許可されます。
+これはすなわち、ユーザーの実効許可属性と必須許可属性の論理積の結果が必要な許可属性と
+等しいということです。
+<P>
+配布されたものの中にある<code>Example_Perm</code>で定義されている許可属性名においては、
+ユーザー<code>kris</code>は<code>auth_user</code>テーブル中で<code>admin</code>として
+定義されているかもしれません。
+<code>$perm-&gt;check(&quot;user,admin&quot;)</code>として<code>admin,user</code>
+許可属性を要求するページには、このユーザーはアクセスできません。これは以下のように計算されます。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+ユーザーの実効許可属性: admin
+　　　　　　　　変換後: 16
+
+ページで必要な許可属性: user,admin
+　　　　　　　変換後: 1 OR 16 == 17
+
+許可属性のチェック:
+        実効許可属性 17
+AND     必須許可属性 16
+よって  16 &amp; 17 = 16
+
+必要な許可属性は 17 -&gt; アクセス拒否
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>
+配布ファイルにある<code>Example_Perm</code>で定義されている許可属性の例は、
+<em>Atomic</em>許可属性と呼ばれます。というのも、これらはたった一つのビットセットを
+持つだけだからです。Atomic許可属性はあらゆる枠組みの中でも最も単純なもので、
+容易に許可属性チェックが行えます。
+<code>user,admin</code>として保護されているページへアクセスするためには、少なくとも
+<code>user,admin</code>権限を<code>auth_user</code>テーブルに保持していることが必要です。
+<P>
+許可属性の定義で用いられるこれとは別の共通の枠組みが<code>inclusive permissions</code>
+(複合許可属性)です。この枠組みでは、それぞれの許可属性の定義は、その前のものが持つ全ての
+ビットに加えて1つのビットを持ちます。例えば、
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+class Inclusive_Perm extends Perm {
+  var $classname = "Inclusive_Perm";
+
+  var $permissions = array(
+                            "user"       => 1,
+                            "author"     => 3,
+                            "editor"     => 7,
+                            "supervisor" => 15,
+                            "admin"      => 31
+                     );
+}
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>
+上の定義は複合許可属性のセットを定義します。この例では、<code>admin</code>許可属性を
+持つユーザー<code>kris</code>は<code>editor</code>許可属性を持つ保護されたページへ
+容易にアクセスすることができます。これは以下のように計算されます。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+ユーザーの実効許可属性: admin
+　　　　　　　　変換後: 31
+
+ページで必要な許可属性: editor
+　　　　　　　変換後: 7
+
+許可属性のチェック:
+        実効許可属性: 31
+AND     必須許可属性: 7
+よって  31 &amp; 7 = 7
+
+必須許可属性は、7でなければならない -> アクセス許可
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>
+複合許可属性は取り扱いが簡単です。というのも、<em>より上位の</em>アクセスレベルを
+もつユーザーは、<em>より低位の</em>アクセスレベルを持つページまたはページ関数へ
+アクセスすることが出来るからです、
+<P>
+マシンの整数値の大きさの制限のために、最大31の許可属性レベルまでしか定義できません。
+<P>
+<P>
+<H2><A NAME="ss3.11">3.11 ユーザー (User)</A>
+</H2>
+
+<P>
+UserクラスはSessionクラスの拡張(サブクラス)です。グローバル変数名のリストを保持し、
+これらの変数をデータベースに格納したり、そこから取り出すための一連の関数を提供しています。
+<P>
+セッション変数と異なり、ユーザー変数はユーザーがブラウザを停止し再起動したり、
+別の場所へ移動した場合でも失われません。
+(このような場合、セッションIDは失われ、セッション変数はセッションIDに依存するため
+全て失われます)
+<P>
+ユーザー変数はユーザーがログインすることを要求します。というのも、これらは変数を
+関連付けるためにユーザーIDが存在することに依存しているからです。
+<P>
+UserクラスはSessionクラスの拡張です。Sessionの全てのインスタンス変数及びインスタンスメソッド
+を持ちますが、いくつか異なる実装がなされています。この文書はこれらの相違点のみ説明します。
+<P>
+Session及びUserは、<code>name</code>カラムの値が異なるため、データベース中で単一の
+<code>active_sessions</code>テーブルを共有することが問題なくできることに注意して下さい。
+<P>
+<P>
+<H3>インスタンス変数</H3>
+
+<P>
+<P>
+<CENTER><TABLE BORDER><TR><TD>
+classname</TD>
+<TD>シリアル化ヘルパ。このクラスの名前。</TD></tr>
+<tr><td>magic</td>
+<TD>Userでは無意味。</TD></TR>
+<TR><TD>mode</TD>
+<TD>Userでは無意味。</TD></TR>
+<TR><TD>fallback_mode</TD>
+<TD>Userでは無意味。</TD></TR>
+<TR><TD>lifetime </TD>
+<TD>Userでは無意味。代わりにAuthでの認証有効期限を参照。</TD></TR>
+<TR><TD>gc_time</TD>
+<TD>動作しますが、Userでは使用されないでしょう。</TD></TR>
+<TR><TD>gc_probability</TD>
+<TD>動作しますが、Userでは0を設定すべきです。</TD></TR>
+<TR><TD>that_class</TD>
+<TD>Userは、データの格納・取得の際にこのクラス名を用います。</TD></TR>
+<TR><TD>auto_init</TD><TD>Userでは無意味。</TD></TR>
+<TR><TD>secure_auto_init</TD><TD>Userでは無意味。</TD></TR>
+<TR><TD>
+<CAPTION>アクセス可能なインスタンス変数</CAPTION>
+</TD></TR></TABLE></CENTER>
+<P>
+<CENTER>
+<TABLE BORDER>
+<TR><TD>pt</TD>
+<TD>永続化変数の名前をもつ内部的な配列</TD></TR>
+<TR><TD>name</TD>
+<TD>セッション型のタグ（名前）</TD></TR>
+<TR><TD>id</TD><TD>現在のセッションのID</TD></TR>
+<TR><TD>that</TD><TD>コンテナオブジェクトのインスタンス</TD></TR>
+<TR><TD>
+<CAPTION>内部インスタンス変数</CAPTION>
+</TD></TR></TABLE></CENTER>
+<P>
+<H3>インスタンスメソッド</H3>
+
+<P>
+<P>
+<H3>公開インスタンスメソッド</H3>
+
+<P>
+<P>
+<DL>
+<DT><B>register($varname)</B><DD><P>きちんと動作します。
+<P>
+<DT><B>unregister($varname)</B><DD><P>きちんと動作します。
+<P>
+<DT><B>delete()</B><DD><P>きちんと動作します。
+<P>
+<DT><B>url($url)</B><DD><P>Userにとって無意味です。
+<P>
+<DT><B>purl($url)</B><DD><P>User にとって無意味です。
+<P>
+<DT><B>self_url()</B><DD><P>User にとって無意味です。
+<P>
+<DT><B>pself_url()</B><DD><P>User にとって無意味です。
+<P>
+<DT><B>reimport_get_vars()</B><DD><P>きちんと動作します。
+<P>
+<DT><B>reimport_post_vars()</B><DD><P>きちんと動作します。
+<P>
+<DT><B>reimport_cookie_vars()</B><DD><P>きちんと動作します。
+<P>
+</DL>
+<P>
+<H3>内部インスタンスメソッド</H3>
+
+<P>
+<P>
+<DL>
+<DT><B>get_id()</B><DD>
+<P>
+これは、ページ管理関数によって提供されるユーザーIDに依存するスタブの実装で
+しかありません。ページ管理関数は <code>Auth</code>により準備される
+<code>$auth-&gt;auth[&quot;uid&quot;]</code>を使うでしょう。
+<P>
+<DT><B>put_id()</B><DD><P>空です。User には役に立ちません。
+<P>
+<DT><B>serialize($prefix, &amp;$str)</B><DD><P>きちんと動作します。
+<P>
+<DT><B>freeze()</B><DD><P>きちんと動作します。
+<P>
+<DT><B>thaw()</B><DD><P>きちんと動作します。
+<P>
+<DT><B>gc()</B><DD>
+<P>きちんと動作しますが、通常は使用されません。
+<P>
+<DT><B>reimport_any_vars($arrayname)</B><DD>
+<P>きちんと動作します。
+<P>
+<DT><B>start()</B><DD>
+<P>
+オブジェクトの初期化の後にコールされる初期化関数です。現在のセッションIDを取得する
+ためにget_id()をコールし、データベース接続を行い、そして全てのセッション変数を
+読み込むためにthaw()をコールします。
+<EM>注意:</EM> 
+gc()の活性化はコメントアウトされています！ユーザー変数に対してgcを行いたい場合、
+コメントを外してください。
+<P>
+</DL>
+<P>
+<P>
+<H3>例</H3>
+
+<P>ユーザー変数へ適切なパラメータを指定するには、サブクラスを用いてください。
+サブクラスは通常以下のようになります。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+class My_User extends User {
+  var $classname = "My_User"; ## 永続化をサポート
+  
+  var $that_class = "CT_Sql";
+}
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>
+データベースにアクセスするために必要なパラメータを指定した<code>DB_Sql</code>
+サブクラスを提供する必要があることを忘れないでください。
+<P>
+Userのサブクラスを用いるためにページ管理関数(上記参照)を用いてください。
+ユーザー変数の機能名は<code>user</code>です; user機能へのパラメータとして
+作成したUserサブクラスの名前を指定して下さい。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+  page_open(array("sess" =&gt; "My_Session", "auth" =&gt; "My_Auth", "user" =&gt; "My_User"));
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>
+変数を永続的に登録するためには、<code>register()</code>インスタンスメソッドを用いてください。
+<code>$user</code>がユーザーオブジェクトの場合、<CODE>$u</CODE>を永続的グローバル変数
+とするためには以下のようにして下さい。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+$user-&gt;register("u");
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>
+<code>$u</code> はスカラー変数、配列、永続化サポートを受けているオブジェクト
+を指定することが可能です。
+<P>
+インスタンスメソッド<code>freeze()</code>及び<code>thaw()</code>は直接使わず、
+代わりにページ管理関数を使ってください。
+<P><EM>注意:</EM>
+デフォルトの認証及びユーザー変数を同時に使用すると問題が起きます。というのも、
+<code>User</code>はいかなるロックも行わないからです。これは、現在<code>DB_Sql</code>に
+移植性のあるロッキング機構が備わっていないためです。
+<P>
+<HR>
+<A HREF="documentation-4.html">次</A>
+<A HREF="documentation-2.html">前</A>
+<A HREF="documentation.html#toc3">目次</A>
+</BODY>
+</HTML>
+
+
+
+
+

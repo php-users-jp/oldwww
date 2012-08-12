@@ -1,0 +1,763 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+  "http://www.w3.org/TR/REC-html40/loose.dtd">
+<HTML lang="ja">
+<HEAD>
+<META name="description" content="__COMMENT__">
+<META http-equiv="Content-Style-Type" content="text/css">
+<META http-equiv="Content-Script-Type" content="text/javascript">
+<TITLE>PHP Base Library ドキュメント リリース phplib_7: 拡張機能</TITLE>
+<LINK rel="stylesheet" href="../../style.css">
+<LINK HREF="documentation-5.html" REL=next>
+<LINK HREF="documentation-3.html" REL=previous>
+<LINK HREF="documentation.html#toc4" REL=contents>
+<!--<SCRIPT language="JavaScript" src="rollover.js"> -->
+</HEAD>
+
+<BODY>
+<A HREF="documentation-5.html">次</A>
+<A HREF="documentation-3.html">前</A>
+<A HREF="documentation.html#toc4">目次</A>
+<HR>
+<H2><A NAME="s4">4. 拡張機能</A></H2>
+
+<P>
+<P>拡張機能のセクションではユーザーインターフェースと関係のない
+しばしば必要とされるアプリケーション機能を提供する非GUIクラスを
+カバーしています。いくつかの拡張クラスはコア機能に依存していますが、
+その他は独立したクラスとなっています。
+<p>拡張クラスは <code>prepend.html</code> によって自動的にインクルー
+ドされない点でコアクラスとは区別されます。必要に応じて明示的に
+クラス定義をインクルードするか <code>prepend.html</code> を改変する必要があります。
+<P>
+<H2><A NAME="ss4.1">4.1 Cart</A>
+</H2>
+
+<p>Cartクラスはプログラム上は独立クラスですが、
+インスタンスが何らかの持続性を有している場合にのみ意味があります。
+Cartクラスは、その <code>start()</code> 関数でセッション変数として
+自身を自動的に登録します。
+<p>Cartクラスは買い物かご(Shopping Cart)を実装しています。
+現時点では、買い物かごの中の品物はそれぞれ独立しています。
+かごは単純な品物だけを持つことができます。それが機能するために他の品物を
+必要としたり、それに依存する品物への基礎を提供するといった複合品目の
+サポートは将来追加されます。
+<p>単純品目の例としては、他のオプションを持たない品物すべて、
+例えばリンゴや本などがあげられます。複合品目の一般的な例としては、
+ピザ（アメリカ、イタリアいずれのスタイルにおいても、正しく機能する
+ためにはトッピングとチーズが必要です）およびコンピュータシステム
+（正しく機能するためには、ケース、マザーボード、RAM、ビデオカード等が
+必要です）があります。
+<p><em>注意:</em> <code>Cart</code> は<em>リリース5</em>まではコアクラスで
+した。もしあなたのアプリケーションが <code>Cart</code> クラスを使って
+いるなら、あなたは明示的にあなたのファイルで指示されている <code>
+prepend.html</code>ファイル内に <code>include("cart.inc")</code> 文を
+加え<em>なければなりません</em>。
+<p><em>注意:</em>ページ管理関数は<code>cart</code>機能について
+Cart クラスを準備し開始する機能をもはやサポートしません。
+cartを自動的に開始する代わりに<code>Session</code>の<code>auto_init</code>
+機能を用いるか、cartを手動で設定することが推奨されます。
+<P>
+<H3>インスタンス変数</H3>
+
+<P>
+<P>
+<CENTER><TABLE BORDER><TR><TD>
+classname</TD><TD>シリアル化ヘルパー:このクラスの名前です。</TD></TR><TR><TD>
+persistent_slots</TD><TD>シリアル化ヘルパー:全ての持続的スロットの名称。</TD></TR><TR><TD>
+item</TD><TD>カゴの中の品物を示す多次元配列</TD></TR><TR><TD>
+currentItem</TD><TD>品物の位置を示すカウンター</TD></TR><TR><TD>
+
+<CAPTION>アクセス可能なインスタンス変数</CAPTION>
+</TD></TR></TABLE></CENTER>
+<P>
+<H3>インスタンスメソッド</H3>
+
+<P>
+<P>
+<H3>アクセス可能なインスタンスメソッド</H3>
+
+<P>
+<P>
+<DL>
+<P>
+<DT><B>check($art)</B><DD><P> 
+指定した品目番号<code>$art</code>を持つ品物がカゴの中にあるかどうかを
+チェックします。ブール値と整数値の配列を返します。もしブール値がtrue なら
+カゴ中の品目番号に対応する品種の個数が戻ります。
+<P>
+<DT><B>reset()</B><DD><P> 
+現在のカゴの中のすべての品物を削除し、$this->currentItem を1に
+リセットします。常にtrueを返します。
+<P>
+<DT><B>num_items()</B><DD><P>
+現在の買い物カゴの中の品目数を返します。もしカゴが空ならfalseを返します。
+互換性上の理由から、この機能は <code>tot_arts</code> としても存在します
+（が、もしこの名前を使用した場合には警告が出力されます）。
+<P>
+<DT><B>add_item($art, $num)</B><DD><P>
+品目番号<code>$art</code>を持つ品目を<code>$num</code>個現在の買い物
+カゴに追加します。買い物カゴ内の <code>$art</code> の位置を示す数字
+（位置番号）を返します。
+<P>
+<DT><B>remove_item</B><DD><P>
+もし十分な個数が
+買い物カゴから品目番号 <code>$art</code> を持つ品目を <code>$num</code> 個削除します。
+ただし、削除する個数以上の物が買い物カゴにある場合に限ります。
+もし成功すれば
+<code>$art</code>の位置番号を返し、もしカゴから取り除くのに<code>$art</code>が
+十分な個数を持っていなければ false を返します。もしこの関数が false を返したら
+カゴはいかなる変更も受けません。
+<P>
+<DT><B>set_item</B><DD><P>
+買い物カゴの中の品種番号 <code>$art</code> の個数を正確に <code>$num</code> 個に
+セットします。もし <code>$num</code> がゼロならば、品目はカゴから取り除かれます。
+買い物カゴ中の <code>$art</code> の位置番号を返します。
+<P>
+<DT><B>show_all()</B><DD><P>
+もし買い物カゴが空ならば、<code>show_empty_cart()</code> を一度コールし
+復帰します。<p>
+<code>show_item_open()</code>を買い物カゴの一覧表示を開始する時に一度コールし、
+次に買い物カゴの各品物ごとに <code>show_item()</code> をコールします。買い物カゴ
+一覧表示の終了時に <code>show_item_close()</code> を一度コールします。
+<P>
+<DT><B>show_item($art, $num)</B><DD><P>
+この関数はユーザーが提供するべきです。カートからある一つの品物を
+表示するための HTML 文を生成します。<code>$art</code> はその品物の品目番号で
+あり、カゴにはそれが <code>$num</code> 個あります。
+<P>
+<DT><B>show_cart_open()</B><DD><P>
+この関数はユーザーが提供するべきです。買い物カゴ一覧を表示するときに
+先立って表示される HTML を生成します。
+<P>
+<DT><B>show_cart_close()</B><DD><P>
+この関数はユーザーが提供するべきです。買い物カゴ一覧を表示するときに
+最後に表示される HTML を生成します。
+<P>
+<DT><B>show_empty_cart</B><DD><P>
+この関数はユーザーが提供するべきです。空のカゴを象徴する適切な
+メッセージを出力します。
+</DL>
+<P>
+<H3>例</H3>
+
+<P>
+<p><code>show_item()</code> の実装を提供するために <code>Cart</code> の
+サブクラスを用います。
+<P>
+<BLOCKQUOTE><code>
+<HR>
+<PRE>
+class My_Cart extends Cart {
+  var $classname = "My_Cart";
+
+  // 品目の個数を求める
+  var $database_class = "DB_Article";
+  var $database_table = "articles";
+  var $db;
+  
+  var $sum = 0;
+
+  function show_cart_open() {
+    printf("&lt;table class=cart_table&gt;\n");
+    $this-&gt;sum = 0;
+  }
+  
+  function show_cart_close() {
+    printf("&lt;/table&gt;\n");
+    printf("全部で %s 個あります\n", $this-&gt;sum);
+  }
+
+  function show_item($art, $num) {
+    if (!is_object($this-&gt;db)) {
+      $class    = $this-&gt;database_class;
+      $this-&gt;db = new $class;
+    }
+    
+    $query = sprintf("select * from %s where artid = '%s'",
+      $this-&gt;database_table,
+      $art);
+    $this-&gt;db-&gt;query($query);
+
+    while($this-&gt;db-&gt;next_record()) {
+      printf(" &lt;tr class=cart_row&gt;\n  &lt;td class=cart_cell&gt;%s&lt;/td&gt;\n",
+        $this-&gt;db-&gt;Record["name"]);
+      printf("  &lt;td class=cart_cell&gt;%s&lt;/td&gt;\n", 
+        $this-&gt;db-&gt;Record["price"]);
+      printf("  &lt;td class=cart_cell&gt;%s&lt;/td&gt;\n",
+        $num);
+      $rowsum = $num * $this-&gt;db-&gt;Record["price"];
+      $this-&gt;sum += $rowsum;
+      printf("  &lt;td class=cart_cell&gt;%s&lt;/td&gt;\n",
+        $rowsum);
+      printf(" &lt;/tr&gt;\n");
+    }
+  }
+}
+</PRE>
+<HR>
+</code></BLOCKQUOTE>
+<p>カゴを使用する際には、<code>Cart</code> サブクラスのインスタンスを作成し、
+<code>start()</code>をコールしてください。これにより、自動的に<code>cart</code>が
+登録されます。
+<p>
+<code>local.inc</code> 中の<code>Session</code> サブクラス中の
+スロット<code>$auto_init</code>を値<code>setup.inc</code>に設定し、
+以下のコードを含む同名のファイルを作ることが推奨されます。
+<P>
+<BLOCKQUOTE><code>
+<HR>
+<PRE>
+  global $cart;               // $cart はグローバル変数
+  $cart = new My_Cart; // My_Cart インスタンス名を $cart にする
+  $cart-&gt;start();          // そしてそれにそれ自身を登録させる
+</PRE>
+<HR>
+</code></BLOCKQUOTE>
+<p>作成したCartを動作させる際には、<code>add_item()</code>と<code>remove_item()</code>
+を使用して下さい。
+<P>
+<BLOCKQUOTE><code>
+<HR>
+<PRE>
+  $cart-&gt;add_item("101", 2);    // "101" 番を2個追加
+  $cart-&gt;remove_item("101", 1); // "101" 番を1個削除
+</PRE>
+<HR>
+</code></BLOCKQUOTE>
+<P>カゴの中身を表示するためには、<code>show_all()</code>を使用して下さい。
+<P>
+<BLOCKQUOTE><code>
+<HR>
+<PRE>
+  $cart-&gt;show_all();    // とにかくカゴの中身はなんだい？
+</PRE>
+<HR>
+</code></BLOCKQUOTE>
+<P>
+<H3>Cartを用いるにあたって(On using Cart)</H3>
+
+<P>Cart クラスを用いる際には、データベース中に自分の店が
+販売する全ての品目をリストする新しいテーブルを定義する必要があります。。
+PHPLIBとMySQLの組み合わせでは、それぞれの仮想Webサーバー毎に
+PHPLIB のインスタンスを生成し、それぞれの顧客ごとに新しいデータベースを
+生成することが推奨されます。
+このデータベースは、物品リストのようなアプリケーション固有の
+テーブルと同時にactive_sessionsやauth_userテーブルを保持する必要があります。
+言い換えると、MySQLと組み合わせる場合には、PHPLIBとMySQLディレクティブとで
+<EM>database_name</EM>を共有することは絶対にやめるべきです。
+もしそうしたとしても何のサポートもありません。
+（もっとも、PHPLIB はオープンソースであり、あなたは
+あなた自身のリスクにおいて使っているので、私たちの言うとおりやったと
+しても何の保証もありませんが・・）
+<p>ここで、大変簡単な新規テーブル <code>articles</code>を
+以下のような構造で定義したと仮定しましょう。
+<P>
+<BLOCKQUOTE><code>
+<HR>
+<PRE>
+# テーブル 'articles' の構造
+#
+CREATE TABLE articles (
+  name text,
+  price float(8,2),
+  artid int(11) DEFAULT '0' NOT NULL auto_increment,
+  PRIMARY KEY (artid)
+);
+</PRE>
+<HR>
+</code></BLOCKQUOTE>
+<P>このテーブルは <code>artid</code>と呼ばれる品目番号を持ち、それぞれの
+<code>artid</code>ごとに品目の説明 <code>name</code> と価格 <code>
+price</code> があります。この最小限の定義に品種グループを追加するとか、
+品種の画像などを格納するための BLOB を追加するなど目的に応じて拡張すること
+が可能ですが、例を示すという意味ではこれで充分です。
+<P>このテーブルに目的に応じていくつかの製品を登録して下さい。
+<P>次なるステップは、cart クラスをPHPLIBに教えることです。
+そうするためには以下の3つのステップが必要です。
+<P>
+<UL>
+<LI><code>Cart</code> クラスを全てのページでインクルードしなければいけません。
+<code>Cart</code> クラスを使わないページにおいてもです。
+<br>
+<code>Cart</code> を使うページにおいて、cart サブクラスをインスタンス化し保存します。
+続く全てのページでその <code>Cart</code>オブジェクトが再現され、また<code>Cart</code>
+オブジェクトを再現可能とするために、PHPは<code>Cart</code> オブジェクトの内容を知る必要が
+あります。ユーザーが最初の品物を <code>Cart</code> に入れた後に
+どのページをユーザーが読み出すかを知ることはできないので、<em>全ての</em>
+ページに<code>Cart</code> の定義を含める必要があります。
+<br>
+<code>したがって、cart.inc</code>により<code>Cart</code>定義をインクルードする設定を
+指定するのに適切な場所は<code>prepend.html</code>です。
+<code>prepend.html</code> を編集し、このファイルのコメントにしたがって
+<code>require("cart.inc")</code>を加えます。
+</LI>
+<LI><code>Cart</code> のサブクラスを目的に応じて作成します。
+<br>作成した<code>Cart</code> のサブクラスを、この例では<code>Example_Cart</code> として
+コールします。実際には好きな名前を付けていいですが、それを一貫して用いなければなりません。
+<br><code>Example_Cart</code> の定義は <code>local.inc</code> のどこかで定義した 
+<code>Example_Session</code> の定義の下に置きます。これは以下のようになります。
+
+<BLOCKQUOTE><code>
+<HR>
+<PRE>
+class Example_Cart extends Cart {
+  var $classname = "Example_Cart";
+
+}
+</PRE>
+<HR>
+</code></BLOCKQUOTE>
+
+
+<br>そしてこの例の後半でコードを追加します。この追加コードにより
+買い物カゴに商品を保持するデータベーステーブルなどに関する事項を指定します。
+</LI>
+<LI>最後に、ユーザーによって選択された商品を実際に保持するオブジェクトを
+確保するために、買い物カゴ(Cart)クラスのインスタンスを生成する必要があります。
+<br>ここでは、オブジェクトインスタンスを生成するためのPHPLIBの大変
+洗練された機能を使います。PHPLIBが適切にセットアップしている場合には、
+セッションが生成されるたびにインクルードファイルをロードし実行することが
+できます。このクラスを制御するSessionのインスタンス変数に基づき、
+この機能は<code>auto_init</code>呼ばれています。
+<br><code>local.inc</code> を開き、<code>Session</code> のサブクラスを
+編集してください。以下のような内容を含むコードを書くと思います。
+
+<BLOCKQUOTE><code>
+<HR>
+<PRE>
+class Example_Session extends Session {
+  var $classname = "Example_Session";
+
+...
+}
+</PRE>
+<HR>
+</code></BLOCKQUOTE>
+
+<br>そして以下の行を <code>Example_Session</code> の定義に追加します。
+
+<BLOCKQUOTE><code>
+<HR>
+<PRE>
+  var $auto_init = "setup.inc",
+</PRE>
+<HR>
+</code></BLOCKQUOTE>
+
+<br>
+<br>そして local.inc があるのと同じディレクトリに <code>setup.inc</code>ファイルを
+作成します。このファイルにあるコードは、新しいセッションを生成するたびに
+実行されます。そのコードは、<code>$sess</code>, <code>$auth</code>,
+<code>$perm</code> オブジェクトがロードされ初期化された後に実行されますが、
+関数コンテキスト内で実行されます。その関数コンテキストからエクスポートしたい
+全ての定義について<code>global</code> とする必要があります。
+<br>以下のように<code>setup.inc</code> 内で<code>$cart</code> という名前で
+<code>Example_Cart</code> のグローバルなインスタンスを生成し、
+PHPLIBにその変数を登録して下さい。
+
+<BLOCKQUOTE><code>
+<HR>
+<PRE>
+&lt;?php
+  global $cart;
+  $cart = new Example_Cart;
+
+  // $sessは既にグローバル変数です。
+  $sess->register("cart");
+ ?&gt;
+</PRE>
+<HR>
+</code></BLOCKQUOTE>
+</LI>
+</UL>
+<p>ここまでの作業によりPHPLIBを用いる全てのページでデフォルトで利用可能な
+<code>$cart</code>オブジェクトが作成されました。このオブジェクトは
+セッション開始時に自動的に生成され、PHPLIB のセッション管理によって
+ページからページへと伝達され、セッション記録を刈り取るガーベージコレクションで
+削除されます。cartクラスについてこれ以上心配する必要はなく、単純に
+<code>page_open()</code> と <code>page_close()</code> の間で常に使用する
+ことができます。PHPLIBが残りの作業を行います。
+
+<p>実際<code>Cart</code>クラスはほとんど何もしません。
+このクラスは、ユーザーが購入した商品の記録を保持する配列
+<code>$cart-&gt;item[]</code> を維持します。
+各要素<code>$cart-&gt;item[$x]</code>は、<code>$cart-&gt;item[$x]["art"]</code>
+(ユーザーの購入希望商品の品目番号)と<code>$cart-&gt;item[$x]["num"]</code>
+(購入希望のその品目番号の商品の個数)からなっています。
+<code>$cart-&gt;currentItem</code>は、<code>$cart-&gt;item[]</code>に商品を
+追加する際に用いられる$xの次の値です。
+<P>買い物カゴに品目を追加するには以下のようにして下さい。
+<br>You add articles to the shopping cart with
+<P>
+<BLOCKQUOTE><code>
+<HR>
+<PRE>
+$x = $cart->add_item($art, $num)
+</PRE>
+<HR>
+</code></BLOCKQUOTE>
+<P>これにより品目番号<code>$art</code>の<code>$num</code> 個の品物がカゴに
+追加されます。既に同じ品目番号の品物を持っていた場合には、この品目の個数が
+<code>$num</code>だけ加算されます。
+そうでなければ新しい品目エントリが作成され、<code>$num</code> にセットされます。
+この関数は、インデックス番号<code>$x</code>をその品目の<code>$cart-&gt;item[]</code>
+配列に返します。
+<P>買い物カゴから品物を削除するには、以下のようなコードを使用します。
+<P>
+<BLOCKQUOTE><code>
+<HR>
+<PRE>
+$x = $cart->remove_item($art, $num)
+</PRE>
+<HR>
+</code></BLOCKQUOTE>
+<P>これにより、カゴに十分な個数の商品が入っていたら、カゴから当該品目番号
+<code>$art</code> を持つ商品を<code>$num</code>だけ削除します。
+カゴに<code>$art</code> がないか、カゴに<code>$art</code>が<code>$num</code> 個
+ない場合には、この関数はfalseを返し、カゴからは何も削除しません。
+それ以外の場合、品目番号<code>$art</code>を持つ商品が<code>$num</code>個だけ
+カゴから取り除かれ、その結果当該品目の個数がゼロになったら配列からその要素は
+削除されます。
+<P>ある品種についてカゴの中にいくつあるかチェックすることができます。
+<P>
+<BLOCKQUOTE><code>
+<HR>
+<PRE>
+list($have, $num) = $cart->check($art)
+</PRE>
+<HR>
+</code></BLOCKQUOTE>
+<P>このチェック関数は二つの要素をもつ配列を返します。対象の品目がカゴの中に
+あったら最初の要素 <code>$have</code> は true です。<code>$have</code> が
+true であれば、<code>$num</code> はカゴの中のその品目ごとの個数を保持し、
+そうでなければ <code>$num</code> は未定義です（実際には 0 ですが、それを
+あてにしてはいけません）。
+<P>ついに私たちは以下の関数を使用します。
+<P>
+<BLOCKQUOTE><code>
+<HR>
+<PRE>
+$cart->show_all()
+</PRE>
+<HR>
+</code></BLOCKQUOTE>
+<P>
+このコードは、買い物カゴを走査し、Example_Cartに対して商品のリストを
+生成する際にコールすることが可能です。
+この関数は、最初に<code>$cart-&gt;show_cart_open()</code> をコールします。
+作成したサブクラスでこの関数のコード実装を提供することが可能です。
+次にカゴの中の各商品について<code>$cart-&gt;show_item($art, $num)</code>を
+コールします。
+デフォルトのCartの実装では意味のあることはしないようになっていますが、
+<code>Example_Cart</code>においてより洗練されたコードを提供することも可能です。
+カゴの一覧表示の終わりに<code>$cart-&gt;show_cart_close()</code>がコールされます。
+ここでも独自のコードを実行させることができます。
+
+
+<P>前のセクションの例では、Cart サブクラスのより洗練された実装を
+示しています。その実装においてshow_cart_open()は、
+(CSSクラスでフォーマットされた)表の開始タグを生成し、
+カウンター <code>$cart-&gt;sum</code>をゼロにセットしています。
+<P>show_cart_close()では表が閉じられ、<code>$cart-&gt;sum</code> の
+カウンターが表示されます。
+<P>容易に想像できるかと思いますが、<code>show_item($art, $num)</code> はそれぞれの
+品目番号についてデータベースに問い合わせを行い、記述と価格を取り出し、最終的に
+各商品の個数を考慮しながら全ての値段を合計しています。
+更にこの関数は、表の行を作成し、顧客に見易い伝票を出力します。
+
+<H2><A NAME="ss4.2">4.2 Template</A>
+</H2>
+
+<P><em>注意:</em> もしこれが FastTemplates のようなものだと思っているならば、
+注意して読んでください。そうではありません。
+<P> 
+Template クラスにより、PHP のコードを全く含まない、しかし置換可能な
+複数のフィールドを有するHTMLコードを保持することを可能にします。
+このクラスは、置換用フィールドに任意の文字列を代入することが可能な
+関数を提供します。代入する文字列は、表全体といったように非常に
+大きなものとすることができます。
+<P>
+<P>
+<H3>インスタンス変数</H3>
+
+<P>
+<P>
+<CENTER><TABLE BORDER><TR><TD>
+classname</TD><TD>文字列。シリアル化ヘルパ。このクラスの名前です。
+</TD></TR><TR><TD>
+debug</TD><TD>論理値。trueに設定された場合、このクラスはデバッグ用出力を行います。
+</TD></TR><TR><TD>
+unknowns</TD><TD>"keep", "comment", "remove" (デフォルト)のどれかです。
+Templateの出力時に未解決の変数名をどのように扱うかを定義します。
+"keep"が設定された場合、それらの変数名はそのままにされます。
+"comment"が設定された場合、未解決の変数名はエラーを報告するHTMLコメントに変形されます。
+"remove"設定された場合、未解決の変数名は暗黙の内に削除されます（デフォルト）。
+</TD></TR><TR><TD>
+halt_on_error = "yes"</TD><TD>"yes" (デフォルト), "report", "no" のどれか一つ。
+Temlateのエラー処理条件を定義します。"yes"に設定された場合（デフォルト）、
+エラーが報告され、実行が中断されます。
+"report"が設定された場合にはエラーが報告され"false" を返しますが、実行は継続されます。
+"no"が設定された場合、エラーは暗黙の内に無視され、"false"を返しますが、実行は継続されます。
+</TD></TR><TR><TD>
+last_error = ""</TD><TD>この変数に直近のエラーメッセージを保持します。
+</TD></TR><TR><TD>
+
+<CAPTION>アクセス可能なインスタンス変数</CAPTION>
+</TD></TR></TABLE></CENTER>
+<P>
+<CENTER><TABLE BORDER><TR><TD>
+file</TD><TD>文字列のハッシュ。変数名をファイル名に変換する変換テーブル。
+</TD></TR><TR><TD>
+root</TD><TD>文字列(パス名)。templateのファイルがロードされる際のベースになるディレクトリ。
+</TD></TR><TR><TD>
+varkeys</TD><TD>文字列のハッシュ。変数名をその変数名に関する正規表現へと変換する変換テーブル。
+</TD></TR><TR><TD>
+varvals</TD><TD>文字列のハッシュ。各varkeysについて変数名を置換する値に
+変換する変換テーブル。
+</TD></TR><TR><TD>
+
+<CAPTION>内部的なインスタンス変数</CAPTION>
+</TD></TR></TABLE></CENTER>
+<P>
+<H3>インスタンス・メソッド</H3>
+
+<P>
+<P>
+<H3>アクセス可能なインスタンス・メソッド</H3>
+
+<P>
+<P>
+<DL>
+<DT><B>Template($root = ".", $unknowns = "remove")</B><DD><P>
+コンストラクタ。2つの省略可能なパラメータを付けてコールされます。
+最初のパラメータはtemplateのディレクトリ(<code>set_root()</code> を
+参照)を設定し、2番目のパラメータは未定義の変数の処理に関する
+ポリシーを設定します。
+<P>
+<DT><B>set_root($root)</B><DD><P>
+この関数は、$root が適正なディレクトリかどうかチェックし、
+templateを格納するベースディレクトリとしてこのディレクトリを設定します。
+<P>
+<DT><B>set_unknowns($unknowns = "keep")</B><DD><P>
+この関数は未解決の変数名の処理に関する指針を設定します。設定される値は、
+"remove", "comment", "keep" のどれかになります。
+"keep"が設定された場合、それらはそのままにされます。
+"comment"が設定された場合、未解決の変数名はエラーを報告する
+HTML コメントに変形されます。"remove" に設定された場合、
+未解決の変数は黙って削除されます（デフォルト）。
+<P>
+<DT><B>set_file($handle, $filename = "")</B><DD><P>
+この関数は、変数の初期値を定義するファイルの名前を定義します。
+これは、$handle/$filenameの組もしくは$handle/$filenameの組の
+ハッシュでコールすることが可能です。
+ファイルはこの時点ではまだ参照されず、必要な時に初めて参照されます。
+<P>
+<DT><B>set_block($parent, $handle, $name = "")</B><DD><P>
+変数$parentは$handleで名前が指定された変数ブロックを保持することが
+できます。この関数は$parentからその変数ブロックを取り除き、
+$nameという名前の変数リファレンスに置換します。
+$nameを省略した場合、この名前は$handleと同じとみなされます。
+<P>
+<DT><B>set_var($varname, $value = "")</B><DD><P>
+この関数は、変数の初期値を設定します。
+初期値は、$varname/$value の組または$varname/$valiue の組のハッシュ
+でコールすることが可能です。
+<P>
+<DT><B>subst($handle)</B><DD><P>
+この関数は、$handle で名前が指定された変数のうち、定義済みの
+値を持つものを全て返します。結果文字列は "最終的なもの" ではありません。
+すなわち、未定義の変数名に関する指針はまだ適用されていません。
+<P>
+<DT><B>psubst($handle)</B><DD><P>
+この関数は、<code>print $this-&gt;subst($handle)</code> の短縮形です。
+<P>
+<DT><B>parse($target, $handle, $append = false)</B><DD><p>
+この関数は、$handleという名前の全ての定義済み変数の値を置換し、
+$targetという名前の変数に結果を格納するか付加します。
+<p>$handleが変数名の配列の場合、$appendは無視されます。
+$handleという名前の変数は順番に置換され、それぞれの
+置換処理の結果は$targetに格納されます。置換結果は、
+$targetという名前の変数において順番に$handleに関する処理結果を
+たどることにより参照可能です。
+<P>
+<DT><B>pparse($target, $handle, $append = false)</B><DD><P>
+<code>print $this-&gt;parse(...)</code> の短縮形です。
+<P>
+<DT><B>get_vars()</B><DD><P>
+全ての定義ずみの変数の値のハッシュをその変数名がキーとして定義された
+状態で返します。
+<P>
+<DT><B>get_var($varname)</B><DD><P>
+$varname で名前が指定されている変数の値を返します。$varname が
+あるファイルを参照し、そのファイルがまだロードされていない場合には、
+その変数はemptyとして報告されます。
+<P>変数名の配列が指定してコールした場合には、
+それらの名前をキーとして定義したハッシュが返されます。
+<P>
+<DT><B>get_undefined($handle)</B><DD><P>
+この関数は、$handle 中の未解決の変数名を変数名をキーとしたハッシュ
+(つまり、$a[$name] = $name の形式のハッシュ)として返します。
+<P>
+<DT><B>finish($str)</B><DD><P>
+この関数は、$str の最終バージョンを返します。すなわち、
+未解決の変数名に関する指針は、$str にも適用されます。
+<P>
+<DT><B>p($varname)</B><DD><P>
+この関数は $varname で名前が指定された変数の値の最終バージョンを出力します。
+<P>
+<DT><B>get($varname)</B><DD><P>
+この関数は $varname で名前が指定された変数の値の最終バージョンを返します。
+<P>
+<DT><B>haltmsg($msg)</B><DD><P>この関数は、
+作成するTemplateサブクラスにより上書きすることが可能です。
+表示するエラーメッセージを引数としてコールされます。
+</DL>
+<P>
+<H3>内部インスタンスメソッド</H3>
+
+<P>
+<DL>
+<DT><B>filename($filename)</B><DD><P>
+相対パス名でコールされた際に、この関数は $this-&gt;root が先頭に
+付加されたパス名を返します。絶対パス名は変更されません。
+<P>filenameで指定されるファイルは存在している必要があり、
+さもなくばエラーが発生します。
+<P>
+<DT><B>varname($varname)</B><DD><P>
+この関数は指定した変数名に関する変数名の正規表現を作成します。
+<P>
+<DT><B>loadfile($handle)</B><DD><P>ある変数が未定義(unknown)か空(empty)
+であり、ファイル名が後ろに付いている場合、後続のファイルが
+ロードされ、そのファイルの内容はその変数の値として代入されます。
+<P>
+<DT><B>halt($msg)</B><DD><P>この関数はエラーが起きたときにコールされ、
+$this-&gt;halt_on_error で定義されたポリシーに従ってエラーが処理されます。
+</DL>
+<P>
+<H3>例</H3>
+
+<P>このクラスは、文字列で一連の変数を管理します。これらの文字列は
+"{変数}" の形式で他の変数へのリファレンスを含んでいます。パースされるか
+置換された際にこの変数へのリファレンスはその変数の値で置換されます。
+<P>変数の値は、<code>set_var("name","value")</code> をコールすることにより
+手動で定義することが可能で、また、<code>set_file("name","filename.ihtml")
+</code> をコールすることによりファイルで定義することも可能です。
+後者では、ファイルの内容は(可能な限り遅くまで)必要に応じてロードされ、
+その変数の値として設定されます。
+<P>変数の値を定義する3番目の方法は、<code>set_block("parent",
+"block", "name"); </code>をコールすることです。この場合、
+<code>parent</code> で名前が指定された変数の中の
+ <code>&lt;!-- BEGIN block --&gt;</code>で始まり <code>&lt;
+!-- END block --&gt;</code>で終わる文字列ブロックが検索されます。
+この文字列は変数 <code>parent</code> から取り除かれ、
+<code>block</code> で名前が指定された変数に代入されます。
+
+代わりに<code>parent</code> において<code>name</code> への変数リファレンスが
+置換されます。
+オプションのパラメータ <code>"name"</code>が省略された場合、
+<code>"block"</code> が代わりに使用されます。
+<p><code>Template</code>を直接使うか、または必要に応じて
+<code>Template</code>のサブクラスを定義して下さい。
+
+<P>page.ihtml という名前のtemplateファイルを以下のように定義します。
+<P>
+<BLOCKQUOTE><code>
+<HR>
+<PRE>
+&lt;html&gt;
+ &lt;head&gt;&lt;title&gt;{PAGETITLE}&lt;/title&gt;&lt;/head&gt;
+ &lt;body bgcolor="#ffffff"&gt;
+ &lt;table border=1 cellpadding=4 cellspacing=0 bgcolor="#eeeeee"&gt;
+  &lt;tr&gt;
+   &lt;td colspan=2&gt;&lt;h1&gt;{PAGETITLE}&lt;/h1&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td&gt;{OUT}&lt;/td&gt;
+   &lt;td&gt;Content&lt;/td&gt;
+  &lt;/tr&gt;
+ &lt;/table&gt;
+ &lt;/body&gt;
+&lt;/html&gt;
+</PRE>
+<HR>
+</code></BLOCKQUOTE>
+<P>このファイルは、変数<code>pagetitle</code>および<code>out</code> という
+名前の変数へのリファレンスを有しています。
+これとは別の box.ihtml という名前のtemplateファイルは、
+3つの変数リファレンス {TITLE}, {NUM}, {BIGNUM} を有するrowという
+名前のブロックを有しています。
+<P>
+<BLOCKQUOTE><code>
+<HR>
+<PRE>
+&lt;!-- start box.ihtml --&gt;
+&lt;table border=1 bgcolor="#cccccc" cellpadding=4 cellspacing=0&gt;
+ &lt;tr&gt;
+  &lt;td colspan=2&gt;&lt;b&gt;{TITLE}&lt;/b&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+  &lt;!-- BEGIN row --&gt;
+  &lt;tr&gt;
+   &lt;td&gt;{NUM}&lt;/td&gt;
+   &lt;td&gt;{BIGNUM}
+  &lt;/tr&gt;
+  &lt;!-- END row --&gt;
+&lt;/table&gt;
+&lt;!-- end box.ihtml --&gt;
+</PRE>
+<HR>
+</code></BLOCKQUOTE>
+<P>以下の php3 ファイルはこれらのtemplateの使い方を示しています。
+<P>
+<BLOCKQUOTE><code>
+<HR>
+<PRE>
+&lt;?php
+  include("./template.inc");
+
+  # $t という名前のTamplateのインスタンスを作成
+  $t = new Template("/page/to/webserver/template", "keep");
+
+  # page と box という名前の、ファイルを参照する変数を定義
+  $t-&gt;set_file(array(
+     "page" =&gt; "page.ihtml",
+     "box"  =&gt; "box.ihtml"));
+
+  # "box" から "row" という名前のブロックを抽出し、
+  # "box" の {rows} へのリファレンスを作成
+  $t-&gt;set_block("box", "row", "rows");
+
+  # 変数 TITLE と PAGETITLE を定義
+  $t-&gt;set_var(array("TITLE"     =&gt; "Testpage",
+                    "PAGETITLE" =&gt; "hugo"));
+
+  # NUM と BIGNUM を定義し、"row" を "rows" に追加...
+  for ($i=1; $i&lt;=3; $i++) {
+    $n  = $i;
+    $nn = $i*10;
+    $t-&gt;set_var(array("NUM" =&gt; $n, "BIGNUM" =&gt; $nn));
+    $t-&gt;parse("rows", "row", true);
+  }
+
+  # box から out を作成し、次に page から out を作成...
+  $t-&gt;parse("out", array("box", "page"));
+
+  # 完了したら出力
+  $t-&gt;p("out");
+?&gt;
+&lt;hr&gt;
+&lt;?php
+  # もしあれば、未定義の変数をレポートします
+  print implode(", ", $t-&gt;get_undefined("rows"));
+ ?&gt;
+</PRE>
+<HR>
+</code></BLOCKQUOTE>
+
+<P>
+<P>
+<HR>
+<A HREF="documentation-5.html">次へ</A>
+<A HREF="documentation-3.html">前へ</A>
+<A HREF="documentation.html#toc4">目次</A>
+</BODY>
+</HTML>

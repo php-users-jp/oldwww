@@ -1,0 +1,578 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+  "http://www.w3.org/TR/REC-html40/loose.dtd">
+<HTML lang="ja">
+<HEAD>
+<META name="description" content="__COMMENT__">
+<META http-equiv="Content-Style-Type" content="text/css">
+<META http-equiv="Content-Script-Type" content="text/javascript">
+<TITLE>PHP Base Library ドキュメント リリース phplib_7: 入門編</TITLE>
+<LINK rel="stylesheet" href="../../style.css">
+<LINK HREF="documentation-2.html" REL=next>
+<LINK HREF="documentation.html#toc1" REL=contents>
+<!--<SCRIPT language="JavaScript" src="rollover.js"> -->
+</HEAD>
+
+<BODY>
+<A HREF="documentation-2.html">次</A>
+前
+<A HREF="documentation.html#toc1">目次</A>
+<HR>
+<H2><A NAME="s1">1. クイックスタート</A></H2>
+
+<P>この章は、PHPLIBのインストールを10分で行うことができるようにするもので、
+簡単なテストの手順の概要説明を行い、PHPLIBの機能概要にも触れています。
+<P>
+<H2><A NAME="ss1.1">1.1 ライセンス</A>
+</H2>
+
+<P>
+<P>PHPLIB は、このディレクトリおよび
+そのサブディレクトリにあるファイルから構成されます。
+PHPLIBは、このディレクトリの
+ファイル <CODE>COPYING</CODE> に詳述された
+LIBRARY GNU General Public License のもとで
+フリーソフトウエアとして利用可能です。
+また、PHPLIBは、有用であることを期待して配布されていますが、
+「無保証」です。商習慣及び特性の目的に沿ったいかなる暗黙の補償も
+行いません。詳細は、ライセンスを参照下さい。
+<P>
+<P>
+<H2><A NAME="ss1.2">1.2 対象とするグループおよびスキル</A>
+</H2>
+
+<P>
+<P>PHPLIB は、PHP アプリケーションの開発者を対象としています。
+使用者は、PHP 言語に関して充分な知識、つまり、
+少なくともSQLデータベースに関する基本的なノウハウと
+本ライブラリを使用可能とするためのWebサーバーの設定法について
+の基本的な知識が必要です。
+
+<P>本ライブラリは、中型から大型のデータ駆動型のwebアプリケーションを
+書く際に有用です。
+"中型から大型のアプリケーション"とは、複数回のデータベースクエリーを
+行うアプリケーションのことで、
+データベースデータから表を作成し、
+SQLクエリーを生成するためのユーザーインターフェースや
+ページやページの機能を充分かつ容易に保護する手段が必要です。
+"データ駆動型" のアプリケーションとは、
+HTMLコンテンツを作成する際にサポートされるSQLデータベースを利用し、
+データベースのトランザクションを駆動するためにHTMLフォームを
+使用するアプリケーションのことです。
+<P>本ライブラリを利用するには、当然、最近の版のPHPインタプリタを
+インストール済みのWebサーバーにアクセスする必要があります。
+(本ライブラリのこのバージョンでは、3.0.12以降を推奨します。
+また、サポートされるSQLデータベースにアクセスする必要があります。
+(現在、PHPLIB は、MySQL, PostgreSQL, mSQL, Oracle 7 および Oracle 8, Sybase,
+Microsoft SQL Server ,ODBC データベースをサポートしています。)
+使用者についてそのデータベースについてデータベースの作成および破棄が
+行える必要があり、Web サーバーのユーザーについては、このテーブルにおいて
+<CODE>SELECT</CODE>, <CODE>INSERT</CODE>,
+<CODE>UPDATE</CODE> , <CODE>DELETE</CODE> 文を実行できる必要があります。
+<P>本マニュアルにおいては、MySQL を使用していることを仮定します。
+PHPLIB はサポートされるどのSQLサーバーでも実行可能ですが、
+PHPLIB の開発には MySQL が使用されています。
+<P>PHPLIB は、CGI のPHP やApache に組み込む
+<CODE>mod_php</CODE> と組み合わせることが可能です。
+CGI版を使用した場合、持続的データベース接続が使用できないため、
+全般的な速度に関する影響があります。
+我々は個人的には様々な理由
+(更新が容易でかつApache <CODE>suexec</CODE>と共に実行可能)
+によりCGI版を使用していますが、CGI 版よりも Apache モジュールを推奨します。
+<P>PHP 4 はまだβ版です。
+β版のソフトウエアに対応したライブラリの開発は行われません。
+<P>
+<H2><A NAME="ss1.3">1.3 簡易インストールガイド</A>
+</H2>
+
+<P>
+<P>以下の手順は、PHPLIB を CGI版のPHPにより実行する場合に
+適用されるものです。
+しかし、多くの記述はmode_php でも同様に有効です。
+<EM>非常に重要な注意事項:</EM> 
+この文章は、Webサーバー、PHPインタプリタ、データベースサーバーを完全に
+制御可能な状態でインストールが行われることを想定した
+簡易版インストールガイドです。
+インストール時に制約が課される レンタル Web サーバーに
+関しては適用できません。
+完全なインストール手順およびトラブル解決策に関する情報に
+ついては、この文書の第2章を参照下さい。
+<P>PHPLIBをインストールする前に、Webサーバーを起動し、
+拡張子 .html を付けたファイルを実行してみてください。
+その際、<CODE>&lt;?php phpinfo() ?&gt;</CODE> という簡単なスクリプトを
+作成してください。
+また、"/" で終わる URL に関するデフォルトファイルとして
+Webサーバーが <CODE>index.html</CODE> と同様に
+<CODE>index.html</CODE> を認識することを確認して下さい。
+(Apache: <CODE>DirectoryIndex index.html index.html</CODE>)
+<P>MySQLデータベースサーバーを入手し、実行して下さい。
+空のデータベースをアプリケーション用に作成し、Web サーバープロセスの
+所有者から 
+<CODE>SELECT</CODE>,<CODE>INSERT</CODE>, <CODE>UPDATE</CODE> , 
+<CODE>DELETE</CODE> 命令が使用可能であることを確認してください。
+user および db テーブルの変更後に <CODE>mysqladmin reload</CODE> 
+を実行するのを忘れないようにして下さい。
+<P>
+<DL>
+<DT><B>手順 1</B><DD><P>
+Webサーバーのルートディレクトリと同じレベルに
+<CODE>php</CODE> という名前のインクルードディレクトリを
+作成して下さい。
+このインクルードディレクトリは、Webサーバーのドキュメントルート
+の下に置かないで下さい。
+<P>
+<DT><B>手順 2</B><DD><P>PHPLIB 配布ファイルを展開して下さい。
+ディレクトリ <CODE>php</CODE> の中身を上記手順で作成した
+ディレクトリ <CODE>php</CODE> に移動して下さい。
+<P>
+<DT><B>手順 3</B><DD>
+<P>自分のWebサーバーに関するPHP インタプリタの設定ファイル 
+<CODE>php3.ini</CODE> を入手し、
+<CODE>include_path</CODE> 命令が上記の
+<CODE>php</CODE> ディレクトリを指すように更新します。
+また、<CODE>auto_prepend_file</CODE> 命令が
+そのインクルードディレクトリの中の
+<CODE>prepend.html</CODE> ファイルを指すように更新します。
+<P>php3.ini ファイルを更新することができない場合は、
+上記の <EM>非常に重要な注意事項</EM> を読んでいないことになります。
+<P>
+<DT><B>手順 4</B><DD>
+<P><CODE>track_vars</CODE> が有効であり、
+<CODE>magic_quotes_gpc</CODE> が有効になっていることも確認して下さい。
+これ以外にもアプリケーションからメールを送信する計画がある場合には、
+<CODE>sendmail_path</CODE> も確認することになるでしょう。
+多くの UNIX システムでは、このオプションは
+<CODE>/usr/lib/sendmail -t</CODE> に設定することにより動作します。
+<P>php3.ini ファイルを更新することができない場合は、
+上記の <EM>非常に重要な注意事項</EM> を読んでいないことになります。
+<P>
+<DT><B>手順 5</B><DD><P><CODE>php</CODE> インクルードディレクトリに
+cd を行います。<CODE>local.inc</CODE> を編集します。
+<CODE>class DB_Example</CODE> にはデータベース接続用の適当なパラメータ
+が示されています。
+<P>
+<DT><B>手順 6</B><DD><P>ここで使用するデータベース(MySQL)の場合、
+配布ファイル中の <CODE>create_database.mysql</CODE> を実行し、
+<CODE>active_sessions</CODE> および <CODE>auth_user</CODE> を作成します。
+<CODE>auth_user</CODE> は、名前が <CODE>kris</CODE> 、パスワードが <CODE>test</CODE> 
+のサンプルユーザーが入力されて公開されます。
+<P>
+<DT><B>手順 7</B><DD><P><CODE>pages</CODE> ディレクトリおよび
+そのサブディレクトリの内容をドキュメントルートディレクトリに移動します。
+<P>
+<DT><B>手順 8</B><DD><P>クッキーを使用可能にして、Webサーバーの
+URL "/" にアクセスします。
+<CODE>index.html</CODE> がない場合、<CODE>index.html</CODE> が表示されます。
+ページをリロードした際に、表示される number は増加します。
+mysql コマンドクライアントでデータベースに接続し、
+<CODE>select * from active_sessions</CODE> を実行します。
+自分のブラウザ用のセッションレコードが1つそこにあることを確認し、
+ページを再ロードし、<CODE>select * from active_sessions</CODE> を再度行った際に
+<CODE>val</CODE> のテキストがどうなるかを見てください。
+これが動作している場合、セッションクラスはクッキーモードで動作しています。
+<P>
+<DT><B>手順 9</B><DD><P>次に <CODE>showoff.html</CODE> にアクセスします。
+名前 <CODE>kris</CODE> 、パスワード <CODE>test</CODE> でログインします。
+<CODE>active_sessions</CODE> を再度確認して下さい。
+この時、<CODE>Example_Session</CODE> エントリ (<CODE>name</CODE> カラム参照)
+および <CODE>Example_User</CODE> エントリがテーブル中にある必要があります。
+両方とも再ロード時に増加します。
+<P>
+<DT><B>手順 10</B><DD><P>クッキーを無効にして再度試してください。
+新しいセッションを得ることになり(クッキーは失われます)、
+URLのgetパラメータ部にセッションIDを見ることができます。
+</DL>
+
+<P>
+<H2><A NAME="ss1.4">1.4 PHPLIB の基本機能の使用法</A>
+</H2>
+
+<P>多くのアプリケーションは、PHPLIB の先進機能を使用しておらず、
+PHPLIB をページを保護したり、パスワードを付加する機能に関して
+有用であると考えています。
+このセクションは、そうした PHPLIB の基本機能を網羅します。
+<P>
+<DL>
+<DT><B>ログインスクリーンのカスタマイズ</B><DD><P>要求に合わせるには
+インクルードディレクトリの <CODE>loginform.ihtml</CODE> を編集して下さい。
+<P>
+<DT><B>許可レベルのカスタマイズ</B><DD><P><CODE>local.inc</CODE> を編集し、
+クラス <CODE>Example_Perm</CODE> を自分の許可属性を表す数値に変更して下さい。
+<CODE>auth_user</CODE> にあるユーザーは、そのリストの中にカンマで
+区切られた1つ以上の名前を有している必要があります。
+エラーメッセージを変更するには、
+<CODE>perminvalid.ihtml</CODE> を編集して下さい。
+<P>
+<DT><B>新規ユーザーの作成</B><DD><P>
+配布ファイル中の <CODE>pages/admin</CODE> ディレクトリから
+<CODE>new_user.html</CODE> を使用してください。
+インストール手順に従うことにより、
+WebサーバーのURL <CODE>/admin</CODE> の下に新規ユーザーが利用可能となります。
+<P>マニュアルでユーザーを作成するには、ユーザーIDを得るために
+<CODE>print md5(uniqid("some magic string")</CODE> を実行し、
+<CODE>insert into auth_user values (
+"得られたユーザーID", "username", "password", "permissions");</CODE>
+を行って下さい。
+<P>
+<DT><B>保護無しセッションページの作成</B><DD><P>
+ページの始めに次のように書きます。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+&lt;?php page_open(array("sess" =&gt; "Example_Session")); ?&gt;
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>ページの終わりに次のように書きます。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+&lt;?php page_close(); ?&gt;
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>
+<DT><B>保護付きセッションページの作成</B><DD><P>
+ページの始めに次のように書きます。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+&lt;?php
+  page_open(
+    array("sess" =&gt; "Example_Session",
+          "auth" =&gt; "Example_Auth",
+          "perm" =&gt; "Example_Perm"));
+  $perm->check("desired protection");
+?&gt;
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>ページの終わりに次のように書きます。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+&lt;?php page_close(); ?&gt;
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>
+<DT><B>保護付き機能の作成</B><DD><P>ページの始めに次のように書きます。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+&lt;?php
+  page_open(
+    array("sess" =&gt; "Example_Session",
+          "auth" =&gt; "Example_Auth",
+          "perm" =&gt; "Example_Perm"));
+?&gt;
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>ページの終わりに次のように書きます。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+&lt;?php page_close(); ?&gt;
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>保護される機能は次のように記述します。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+&lt;?php
+  if ($perm-&gt;have_perm("desired protection")):
+?&gt;
+保護付きのHTMLまたはPHPをここに置きます。
+&lt;?php
+  endif
+?&gt;
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P><EM>注意:</EM> <CODE>desired protection</CODE> は、
+<CODE>Example_Perm</CODE> に記述した許可属性の
+組み合わせです。
+Example_Perm のデフォルトの値を使用した場合、
+"<CODE>user</CODE>", "<CODE>user,author</CODE>" , "<CODE>admin</CODE>" が
+有効な値の全てです。
+ユーザーは、$perm-&gt;check() または $perm-&gt;have_perm() コールで
+要求された全ての許可属性を有している場合にのみページにアクセス可能です。
+<P><EM>注意:</EM> 
+ユーザーは、<CODE>auth_user</CODE> の perms カラムに複数の許可属性を
+有することが可能です。
+"<CODE>user,author,editor</CODE>" という perms を有するユーザーは
+これらの許可属性の組み合わせを要求される全てのページにアクセス可能です。
+<P><EM>注意:</EM> スペースを使用してはいけません。"<CODE>user,author,editor</CODE>" は動作しますが、
+"<CODE>user, author, editor</CODE>" は動作しません。
+<P><EM>注意:</EM> <CODE>$auth-&gt;auth["uid"]</CODE> が
+保護付きのページで設定され、<EM>かつ</EM>
+<CODE>(time &lt; auth-&gt;auth["exp"])</CODE> の場合にのみ
+認証結果は有効になります。
+ユーザ名として <CODE>$auth-&gt;auth["uname"]</CODE>、
+ユニークなユーザーIDとして <CODE>$auth-&gt;auth["uid"]</CODE>、
+そのユーザーの現在の許可属性として
+<CODE>$auth-&gt;auth["perm"]</CODE> を使用可能です。
+実際、
+<CODE>$auth-&gt;auth["perm"]</CODE> を直接いじる必要はなく、
+情報を得るには <CODE>$perm-&gt;have_perm("...")</CODE> を利用します。
+<P>
+<DT><B>PHPLIB を理解する</B><DD><P>
+この文章を読んでください。次にソースを読んでください。
+そして、この文章を再度読んでください。
+Session-&gt;serialize() と Auth-&gt;start() のコードは見難いです。
+CVS アカウントを取得し、コードを提供してください。有名になれます。
+フェラーリのように。
+<P><EM>注意:</EM> 
+どんな変数が登録されるかを知りたい。
+フォーム変数とセッション変数がページにインポートされる
+順番を理解したい。
+フォーム変数からセッション変数に値がそれ自体の値を失わずに
+どのようにコピーされるかを理解したい。
+持続的なフォーム変数を作成したくない。
+このような場合には、上記のようにすると幸せな生活をおくることができます...
+</DL>
+<P>
+<P>
+<H2><A NAME="ss1.5">1.5 テスト</A>
+</H2>
+
+<P>
+<P>
+以下の手順は、PHPLIB を CGI PHP と実行する場合に適用されます。
+しかし、手順の多くは mod_php でも有効です。
+この節は、上記のインストール手順が失敗した場合に、
+インストール時の問題を基本的なところから検討することにより
+見つける手法を示します。
+<P>サポート用のメーリングリストがアドレス
+<CODE>phplib@lists.netuse.de</CODE> にあります。このリストに加入するには、
+コマンド <CODE>subscribe</CODE> をアドレス 
+<CODE>phplib-request@lists.netuse.de</CODE> に送付して下さい。
+<P>
+<DL>
+<DT><B>Webサーバーの起動・動作を確認する</B><DD><P>
+Webサーバーが起動しているか、
+設定した仮想ホストが動作しているかを確認して下さい。
+これを行うには、
+小さなファイル <CODE>test1.html</CODE> を DocumentRoot に作成し、
+<CODE>test1.html</CODE> により Web サーバーにアクセスしてみて下さい。
+<P>
+<DT><B>WebサーバーがCGIプログラムを実行しているかどうかを確認する</B><DD><P>
+Webサーバーが起動し、CGIが実行できることを確認して下さい。
+現在のディレクトリ、実行するプログラムの UID/GID を確認し、
+環境変数を見て下さい。
+次のシェルスクリプトをインストールして下さい。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+#! /bin/sh --
+ 
+echo "Content-Type: text/plain"
+echo
+id
+echo
+pwd
+echo
+env | sort
+echo
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>これをCGI用ディレクトリに<CODE>cgi-test</CODE>という名前で置き、
+ドキュメントルートに <CODE>cgi-test.cgi</CODE> という名前で置いて下さい。
+実行許可を与えて下さい。
+<CODE>/cgi/cgi-test?par1=one&amp;par2=two</CODE> および
+<CODE>/cgi-test.cgi?par1=one&amp;par2=two</CODE> にアクセスし、
+出力を確認して下さい。
+実行ユーザーの UID/GIDは、<CODE>pwd</CODE> の出力は、設定されている環境変数は？
+<CODE>QUERY_STRING</CODE> はどのようになっていますか？
+<CODE>PATH</CODE> 変数はどうなっているか、
+<CODE>LD_LIBRARY_PATH</CODE> 変数はどうなっているか、
+PHP により必要とされる全てのライブラリがCGI環境で実行中のPHPにより
+アクセス可能であるか
+(PHP上でUNIX <CODE>ldd</CODE> コマンドを実行することにより確認します)
+を確認下さい。
+<P>特に、Oracle サポート機能をPHPに組込み、
+<CODE>libclntsh</CODE> を動的にリンクしている場合、
+そのライブラリはCGI環境からロード可能ですか？
+そうでない場合、
+PHPは次のステップに進むことはできません。
+<P>
+<DT><B>PHPインタプリタの実行を確認する (CGI 版 PHPの場合)</B><DD><P>
+PHPバイナリをCGIバイナリ用ディレクトリにコピーしてください。
+(このディレクトリはDocumentRoot以下に置くべきではありません!)
+そして、実行可能にして下さい。
+<CODE>php3.ini</CODE> を同じディレクトリにコピーしてください。
+DocumentRoot に <CODE>test2.html</CODE> を作成し、&lt;?php phpinfo() ?&gt; 
+と中に書いて下さい。
+<P>Apache を実行していますか? その場合は、次の記述を設定ファイルに加えてください。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+Action       php3-script /cgi/php
+AddHandler   php3-script .html
+DirectoryIndex index.html index.html index.htm
+FancyIndexing on
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>
+これにより、
+
+<CODE>.html</CODE> で終わるファイルへの全てのリクエストは
+<CODE>php3-script</CODE> ハンドラにマップされ、
+内部的にリクエスト <CODE>php3-script</CODE> を処理するURLとして
+<CODE>/cgi/php</CODE>が定義されます。
+<P><CODE>/test2.html</CODE> へのリクエストを行い、
+実行されているかを確認して下さい。
+(いくつかの色の定義に関して) <CODE>php3.ini</CODE> を変更し、再ロードして下さい。
+その変更は、<CODE>phpinfo()</CODE> の出力に反映されていますか？
+そうでない場合、その <CODE>php3.ini</CODE> は見つけられおらず、
+問題があります。
+適当な設定を行い再コンパイルして下さい。
+<P>
+<CODE>phpinfo()</CODE> の出力を注意深く確認して下さい! 
+PHP は最新版ですか? 
+(このリリースは PHP 3.0.12 で開発され試験されています)
+使用するデータベースインタフェースが<CODE>phpinfo()</CODE> の出力に
+表示されていますか？そうでない場合は再コンパイルして下さい。
+<P>
+同様にURL <CODE>/cgi/php/test2.html</CODE> として<CODE>/test2.php3</CODE>
+にアクセスすることができますか? 出来る場合は、
+<CODE>--enable-force-cgi-redirect</CODE> を付けて PHP インタプリタが
+コンパイルされていません。
+PHPLIB は、このインタプリタでは動作しません。
+このスイッチを付けて再コンパイルして下さい。
+<P>
+<DT><B>PHP インタプリタ (mod_phpの場合)</B><DD><P>
+<P>サーバーが既に正確に設定されていることを仮定し
+(<CODE>srm.conf</CODE>中にPHPに関する記述を書くことを忘れないで下さい!)、
+次のファイルを入力し、DocumentRoot に<CODE>test2.html</CODE>として保存します。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+&lt;? phpinfo() ?>
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>
+webブラウザを用いてこのファイルにアクセスできる場合、
+PHP、Apacheおよびその環境についての多くの情報を得ることができるはずです。
+<P>
+<DT><B>PHPLIB のインクルードを確認する</B><DD><P>
+PHPはPHPLIBを正しく読みこんでいますか？
+<CODE>php3.ini</CODE> ファイルを確認して下さい。
+このファイルに次のように設定を行っておく必要があります。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+include_path = 全ての .inc ファイルがあるディレクトリへのパス名
+auto_prepend_file = prepend.html へのパス
+track_vars = On
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>
+次の設定も記述する必要があります。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+magic_quotes_gpc = On
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>
+PHPLIBが適当に設定されている場合、次のページはエラーなく実行可能です。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+&lt;?php
+$db = new DB_Example;
+print "It works without error messages.&lt;br>\n";
+ ?&gt;
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>
+<DT><B>データベースとの接続を確認する</B><DD><P>
+PHPLIB のインストールには、<CODE>local.inc</CODE> が正しく設定されている必要が
+あります。
+特に、提供されたクラス <CODE>DB_Example</CODE> は使用するデータベース接続に
+合わせてカスタマイズする必要があります。
+Webサーバーが次のページのデータベースをアクセスできるかどうかテストして下さい。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+&lt;?php
+  include("table.inc"); // 動作させるには、include_path に記述する必要があります。
+
+  $db = new DB_Example;
+  $db->query("select * from auth_user");
+
+  $t = new Table;
+  $t->heading = "on";
+  $t->show_result($db);
+?&gt;
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>
+正しく実行された場合、このページには、テーブル <CODE>auth_user</CODE> から
+<CODE>kris</CODE>  に関するユーザーエントリにパスワード <CODE>test</CODE>、
+許可属性 <CODE>admin</CODE> が表示されます。
+そうならない場合、<CODE>local.inc</CODE> の <CODE>DB_Example</CODE> の定義が
+壊れています。
+<P>
+<DT><B>セッションの動作を確認する</B><DD><P>
+配布ファイルと共に提供されているページ <CODE>/index.html</CODE> を
+アクセスして下さい。
+このページは、ブラウザにクッキーを設定します。クッキーの設定を許可して下さい。
+<P>
+このページは、カウンタ付きのヘッドラインを表示します。
+ページを再ロードしてください。カウンターは増加するはずです。
+増加しない場合、ブラウザがクッキーを正しく処理できないか、PHPLIBが
+データベースのテーブル <CODE>active_sessions</CODE> を正しく読み書き
+できていないかのどちらかです。
+<CODE>phpinfo()</CODE> の出力を見てクッキーが設定されているかどうかを
+確認して下さい。
+(4番目のテーブルにクッキーと他のコール毎のデータが表示されます。)
+コマンドラインからデータベースに接続し、データベースの許可属性を確認して下さい。
+<P>
+<DT><B>認証の動作を確認する</B><DD><P>
+配布ファイルで提供されている <CODE>/showoff.html</CODE> をロードしてみてください。
+このページはログインを要求します。
+<CODE>kris</CODE> としてパスワード <CODE>test</CODE> を用いてログインして下さい。
+ログインが成功したら、
+セッション毎のカウンタとユーザー毎のカウンタを再度見て下さい。
+ページを再ロードして下さい。
+カウンタは増加するはずです。
+<P>ログインできない場合、おそらくクッキーに問題があります。
+ブラウザがセッションクッキーを受け付け送信することを再度確認して下さい。
+他の問題としては、テーブル <CODE>auth_user</CODE> へのアクセスが
+考えられます。
+このテーブルに対して<CODE>SELECT</CODE> が可能である必要があり、
+ログインするユーザーのエントリを有している必要があります。
+</DL>
+
+<P>
+<P>
+<HR>
+<A HREF="documentation-2.html">次</A>
+前
+<A HREF="documentation.html#toc1">目次</A>
+</BODY>
+</HTML>

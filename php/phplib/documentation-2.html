@@ -1,0 +1,615 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+  "http://www.w3.org/TR/REC-html40/loose.dtd">
+<HTML lang="ja">
+<HEAD>
+<META name="description" content="__COMMENT__">
+<META http-equiv="Content-Style-Type" content="text/css">
+<META http-equiv="Content-Script-Type" content="text/javascript">
+<TITLE>PHP Base Library ドキュメント リリース phplib_7: 概要及びインストール</TITLE>
+<LINK rel="stylesheet" href="../../style.css">
+<LINK HREF="documentation-3.html" REL=next>
+<LINK HREF="documentation-1.html" REL=previous>
+<LINK HREF="documentation.html#toc2" REL=contents>
+<!--<SCRIPT language="JavaScript" src="rollover.js"> -->
+</HEAD>
+<BODY>
+<A HREF="documentation-3.html">次</A>
+<A HREF="documentation-1.html">前</A>
+<A HREF="documentation.html#toc2">目次</A>
+<HR>
+<H2><A NAME="s2">2. 概要およびインストール</A></H2>
+
+<P>
+<P>本節では、PHPLIBのインストール、検証、レイアウトに関する議論を行います。
+PHPLIBをどうやってインストールするか？どんな機能やクラス定義が各ファイルに
+含まれているか？PHPLIBがインストールされたWebサーバーのレイアウトはどのよう
+になるか？インストール時のオプションは何か、そして、そのオプションは性能に
+どのような影響を与えるか？
+<P>
+<H2><A NAME="ss2.1">2.1 ファイル、クラスおよび関数</A>
+</H2>
+
+<P>
+<P>PHPLIB は、セッション追跡、セッション毎およびユーザー毎の持続的変数
+ユーザ認証、許可属性の確認といった機能を提供する一連の基本クラスと関数を
+有しています。この基本機能に基づき構築することにより、PHPLIB では、
+一般的に必要とされる "背景" クラスと
+簡単にHTMLに基づくユーザーインターフェースが作成できる
+"HTMLウィジェット"を提供します。
+<P>全てのPHPLIBの定義は、ユーザーがこれらのファイルを全く変更する必要が
+ないように設計されています。
+PHPLIBのカスタマイズ用の定義は、<CODE>local.inc</CODE>および<CODE>setup.inc</CODE>、
+いくつかのケースでは<CODE>prepend.html</CODE>といった設定の仕方によって2つまたは3つの
+ファイルに記述されています。
+PHPLIBの他のファイルは全く変更する必要はありません。細部を以下にまとめます。
+<P>
+<H3>カスタマイズ</H3>
+
+<P>
+PHPLIBにおいて通常のアプリケーションで変更を要するのは、次の3つのファイルのみです。
+<P>
+<DL>
+<DT><B>アプリケーションのコンフィグレーションを <CODE>local.inc</CODE> で行う:</B><DD><P>
+ほとんどの場合、上位クラスで提供されたデフォルト値ではアプリケーションは
+動作しません。アプリケーション毎に以下に記述するようにクラスを拡張する必要があります。
+<P>
+<P>サブクラスで指定する必要があるのは、アプリケーションで異なる部分のみです。
+これらは、データベースのホスト名、データベース名、テーブル名、ユーザー名/パスワード
+の組み合わせといったものです。
+例を動作させるためには、ログインスクリーンの定義(HTML)およびユーザー認証関数(SQL)
+を提供する必要があります。
+<P>
+<P>配布ファイルでは、典型的な設定を行う場合の
+<CODE>local.inc</CODE> を提供しています。
+これらの定義は、管理や配布ファイルと共に提供されテスト用スクリプトを実行するためにも
+必要です。
+<P>
+<P>このファイルは必須で、セットアップ時に変更する必要があります。
+<P>
+<DT><B><CODE>setup.inc</CODE> によるアプリケーション設定:</B><DD><P>
+<CODE>Session</CODE> クラスは、セッションの設定時に初期化用のコードを実行する
+機能を提供します。
+設定時の動作については、クラスの定義を参照下さい。
+<P>規範に沿ってインクルードディレクトリの<CODE>setup.inc</CODE>の中にこのようなコードが
+保存されています。
+このコードは、新規ユーザーの接続がアプリケーションに行われ、新規セッションが
+開始される度毎に実行されます。
+<P>
+<P>このファイルはオプションで、デフォルト値は提供されません。
+<P>
+<DT><B><CODE>prepend.html により自動的にロードされるクラスの選択</CODE></B><DD><P>
+ファイル <CODE>prepend.html</CODE> は、PHP3 に解釈される全てのページに関して
+ロードされるコードを定義します。
+通常、このファイルには次のような全コアクラスのクラス定義を記述します。
+<CODE>db_mysql.inc</CODE>, <CODE>session.inc</CODE>, <CODE>auth.inc</CODE>,
+<CODE>perm.inc</CODE>, <CODE>user.inc</CODE>, 
+ローカルカスタマイズ用の <CODE>local.inc</CODE> ,
+ページ管理用関数の <CODE>page.inc</CODE>。
+<P>使用するデータベースインターフェースに合わせて<CODE>prepend.html</CODE> を変更する
+必要があります。
+<CODE>db_mysql.inc</CODE>を読み込む<CODE>require</CODE> 文を適当に変更して下さい。
+<P>PHPLIBのいくつかのコア機能をアプリケーションで使用しないか
+全ページに何らかの他の機能を付加したい場合、
+ここにある各インクルードファイルについて
+<CODE>require</CODE> を削除または追加することが可能です。
+<P>
+<P>このファイルは必須で、MySQLを使用しない限り、セットアップ時に変更する必要があります。
+</DL>
+<P>
+<H3>基本機能</H3>
+
+<P>
+<P>次のファイルは、<CODE>prepend.html</CODE> からインクルードされ、
+PHPLIBのコアクラスの定義を行います。
+これらは、密接な相関を持って構築されたクラスであるため、
+これら全てを常にインクルードすることが推奨されます。
+<P>
+<DL>
+<DT><B>クラス <CODE>DB_Sql</CODE> は、実際には
+<CODE>db_mysql.inc</CODE>, <CODE>db_msql.inc</CODE>, <CODE>db_pgsql.inc</CODE>, 
+<CODE>db_odbc.inc</CODE>, <CODE>db_sybase.inc</CODE>, <CODE>db_mssql.inc</CODE>,
+<CODE>db_oracle.inc</CODE> ,<CODE>db_oci8.inc</CODE>
+のどれかで定義されます。
+:</B><DD><P>
+<P>使用するデータベースサーバー用のデータベースアクセスクラスです。
+PHPLIB は、SQL データベースサーバーの使用を前提にしています。
+使用するデータベースサーバーにより、適当なインクするファイルを選択する必要が
+あります。このファイルは、使用するデータベースサーバー用の
+クラス <CODE>DB_Sql</CODE> の定義を含んでいます。
+<P>
+<P>このクラスは、データベース接続を管理し(接続の設定は暗黙のうちに行われます)、
+結果保持用メモリは自動的に管理されます。
+<P>
+<P>独立したクラスです。
+<P>
+<DT><B>クラス <CODE>Session</CODE> は、<CODE>session.inc</CODE> で定義されています:</B><DD><P>
+スカラー、配列、オブジェクト型の任意の数のセッション変数を管理します。
+(オブジェクトをサポートするには、クラスに2つのインスタンス変数を実装することが必要です。)
+セッションの追跡は、クッキーまたは各URLに <CODE>get</CODE>-変数を付加することにより行います。
+<P>
+<P><CODE>DB_Sql</CODE> に依存します。
+<P>
+<DT><B>クラス <CODE>Auth</CODE> は <CODE>auth.inc</CODE> で定義されます:</B><DD><P>
+セッション認証を管理します。セッションは、データベースの中で
+ユーザー名およびパスワードで認証されます。認証に時間制限を設けることが可能です。
+<P>
+<P><CODE>Session</CODE> および <CODE>DB_Sql</CODE> に依存します。
+<P>
+<DT><B>クラス <CODE>Perm</CODE> は、<CODE>perm.inc</CODE> で定義されています:</B><DD><P>
+保護機能付きのセッションページで許可属性の確認を管理します。
+保護されたページは指定した権利を有するユーザーのみが閲覧可能です。
+<P>
+<P><CODE>Auth</CODE>, <CODE>Session</CODE> ,<CODE>DB_Sql</CODE>に依存します。
+<P>
+<DT><B>クラス <CODE>User</CODE> は、<CODE>user.inc</CODE> で定義されています:</B><DD><P>
+ユーザー依存の変数を管理します。セッション変数とは異なり、
+セッションIDではなくユーザーIDで区別されます。
+複数のセッションにまたがる持続性を有していますが、ユーザーが認証された後でのみ
+でしか利用できません。
+<P>
+<P><CODE>Auth</CODE>, <CODE>Session</CODE>, <CODE>DB_Sql</CODE>に依存し、
+<CODE>Session</CODE> を拡張したものです。
+<P>
+<DT><B><CODE>page.inc</CODE>で定義されている関数 <CODE>page_open()</CODE> 
+および <CODE>page_close()</CODE>:</B><DD><P>
+このセットアップおよびシャットダウン関数は全てのセッションページに必要です。
+<P>
+<P><CODE>Session</CODE>に依存します。
+</DL>
+<P>
+<H3>拡張機能</H3>
+
+<P>
+<P>拡張機能クラスは、HTMLアプリケーションで通常必要とされるGUI無しの背景機能
+を提供します。このクラスは、(以下の各クラスで示すように)
+コア機能を使用しています。
+<P>
+<DL>
+<P>
+<DT><B>><CODE>cart.inc</CODE>の<CODE>Cart</CODE>:</B><DD><P>
+簡単なショッピングカートを管理します。
+商品をカートに入れ、カートを持ち出して、カートの中身を数えることができます。
+<P>
+<P>
+<CODE>Session</CODE> に依存しています。
+<CODE>prepend.html</CODE>に <CODE>require("cart.inc")</CODE> という
+行を加える必要があります。
+<P>
+<DT><B><CODE>template.inc</CODE>の<CODE>Template</CODE></CODE>:</B><DD><P>
+テンプレートおよび変数置換を管理します。
+テンプレートは、ファイルに保存することが可能です。
+保存されたテンプレートはいつでもロードすることが可能で、この場合、
+変数はこれらのファイルの内容で置換されます。
+<P>
+<P>このクラスは、独立したクラスです。
+<CODE>require("template.inc")</CODE> という文を <CODE>prepend.html</CODE> に
+加えるか、このクラスを使用する各ページに手動でこのファイルをインクルードする
+必要があります。
+</DL>
+<P>
+<H3>HTML ウィジェット</H3>
+
+<P>
+<P>HTML ウィジェットは、(フォームや表といった)
+GUI要素を表示するためのHTMLコードを生成するクラスです。
+GUI要素の見かけを容易にカスタマイズできるように
+アプリケーションで一般に使用される機能を提供することが意図されています。
+<P>
+<DL>
+<DT><B><CODE>csv_table.inc</CODE>の<CODE>CSV_Table</CODE>:</B><DD><P>
+二次元配列またはクエリー結果のダンプをデータベースまたは表計算プログラムでロード可能な
+CSVフォーマットで作成します。
+<P>
+<P><CODE>Table</CODE>に依存し、<CODE>Table</CODE>を拡張したものです。
+<P>
+<DT><B><CODE>sql_query.inc</CODE>の<CODE>Sql_Query</CODE>:</B><DD><P>
+ユーザーが任意の条件で1つ以上のテーブルカラムを選択できる選択ウィジェットを作成します。
+SQLはこれらのセレクションから作成されています。
+これは、大きなSQL select文の where 句に使用することができます。
+<P>
+<P><CODE>Session</CODE> および <CODE>DB_Sql</CODE> に依存します。
+<CODE>require("sqlquery.inc")</CODE> 文を<CODE>prepend.html</CODE>に
+加える必要があります。
+<P>
+<DT><B><CODE>table.inc</CODE>の<CODE>Table</CODE>:</B><DD><P>
+二次元配列又はデータベースクエリー結果からHTMLテーブルを作成します。
+このクラスは配列から指定したカラムを取り出すフィルターとしても
+表示したいカラムの名前を明示的に指定することも可能です。
+表題をオンにすることも可能です。
+生成された全てのHTML要素には、必要に応じてスタイルシートをサポートするために
+指定したクラス名のタグが付いています。
+フォームタグで使用された場合、各テーブル行は、行の選択を可能とするために
+チェックボックス入力が前に付加されます。
+<P>
+<P>独立したクラスです。
+<P>
+<DT><B><CODE>oohforms.inc</CODE> の<CODE>Form</CODE>:</B><DD><P>
+機能-&gt;値の配列からHTMLフォームを作成します。
+このクラスは、あらゆる形式のフォームを一つの構文で作成する手段を提供します。
+このクラスは、Javascript およびサーバーサイド認証への容易なアクセス手段を提供し、
+静的なデータを表示するためにフォーム要素のいくつかまたは全てを'凍結する'機能を
+サポートします。
+加えて、ライブラリは様々なフォーム要素をオブジェクト指向的に実装しており、
+容易に拡張やカスタマイズが可能です。
+<P>
+<P>独立したクラスです。
+</DL>
+
+<P>
+<H2><A NAME="ss2.2">2.2 配布ファイルのダウンロード及び展開</A>
+</H2>
+
+<P>本ライブラリは、<A HREF="http://phplib.netuse.de/">PHP Base Library ダウンロード場所</A>
+で提供されています。tar.gz 版とshar 版の2種類の異なったフォーマットが提供されています。
+<P>Windows システムを使用している場合、WinZIP をインストールしているとしたら、
+最新版の WinZIP は、圧縮された tar アーカイブを処理することができます。
+解凍されたファイルは、Windows システムにインストールしたり、UNIXシステムに転送したり
+することが可能です。
+<P>バイナリファイルを処理することができない場合、phplib.shar を
+ダウンロードすることが可能です。
+このファイルは、自己展開用シェルスクリプトを有するASCII ファイルです。
+このファイルを保存し、実行可能とし、UNIXシェルに食わせてください。
+(例えば、<CODE>sh phplib.shar</CODE> と入力します)
+<P>
+<A HREF="mailto:phplib@lists.netuse.de">PHPLIB サポートメイリングリスト</A> 
+を本ライブラリに関する陥るであろう問題に対して利用することが可能です。
+加入するためには、コマンド <CODE>subscribe</CODE> を
+<A HREF="mailto:phplib-request@lists.netuse.de">メーリングリスト加入用アドレス</A>
+に送信して下さい。
+<P>
+<H2><A NAME="ss2.3">2.3 要求と確認事項</A>
+</H2>
+
+<H3>インタプリタに対する要求</H3>
+
+<P>
+<P>本ライブラリは、CGIが動作するWebサーバーと PHP 3.0.12 以降がインストールされている
+必要があります。
+もしくは、 mod_php を使用することが可能です。
+古い版のPHPでは全く動作しません。これは、セッションクラスが関数
+<CODE>base64_encode()</CODE> と <CODE>base64_decode()</CODE>
+を使用しており、古い版(3.0.7まで)には既知のバグがあるからです。
+また、OOH Forms クラスはコンストラクタ構文を使用していますが、
+これは PHP 3.0.5 以降で導入されたものです。
+$PHP_SELF 変数と CGI PHP に関する問題は、バージョン 3.0.5 以降で解決されています。
+Perl 正規表現関数が <CODE>Template</CODE> クラスで使用されていますが、
+この関数は実際には 3.0.12 になるまで利用可能ではありませんでした。
+<P><EM>注意:</EM> CGI PHP を使用している場合、$PHP_SELF が正しい値を有するように
+<CODE>--enable-force-cgi-redirect</CODE> スイッチを付けてコンパイルされている
+必要があります。
+<P>基本的に、PHP_SELF が $URL の正しいローカル部である場合、
+全て動作します。
+/cgi-bin のディレクトリ/php が先頭につくように修正されたURLが
+含まれている場合、バグの有るバージョンの CGI PHP を使用しています。
+PHP のバージョンを更新するか PHPLIB の中にある $PHP_SELF を全て
+$PATH_INFO に置換して下さい。
+<P><EM>注意:</EM> PHPLIB では、<CODE>track_vars</CODE> 機能を有効にして
+コンパイルされ、有効とされている必要があります。
+<P><EM>注意:</EM> PHPLIB では、<CODE>short_open_tag</CODE>が有効になっている必要はありません。
+本ライブラリは、PHP コマンドの開始記号として常に<CODE>&lt;?php</CODE>を使用しています。
+<P><EM>注意:</EM> PHPLIB では、<CODE>magic_quotes_gpc</CODE>が有効となっている必要はありません。
+本ライブラリは、必要な時に常に<CODE>addslashes()</CODE>を使用します。
+<P>
+<H3>データベースに対する要求</H3>
+
+<P>デフォルトでは、本ライブラリは、
+セッション変数の保存用にデータベース接続を要求します。
+しかし、インストール時に別の保存手段を選択することにより
+これを回避することができます。
+保存手段には、
+現在、SQLデータベース(デフォルト)、
+長さ制限付きのSQLデータベース(ct_split_sql.inc)、
+システムV共有メモリ
+(PHPインタプリタがSYSVSHMおよびSYSVSEMをサポートしている
+必要があります)、
+LDAPサーバー(PHPインタプリタがLDAPをサポートしている必要があります)、
+フラットファイル、DBMファイルがあります。
+<P>SQLを使用した場合、現在MySQLが完全にサポートされており、PostgreSQL,
+mSQL, Sybase, Microsoft SQL Server, ODBC , Oracle が制限付きの
+サポートとなっています。
+(制限は、メタデータ情報、例えばテーブル定義等、にアクセスしようとした場合に
+限って課されるものです)
+データベースインターフェースを書くことは難しいことではなく、
+自分用のインターフェースを簡単に書くことが可能です。
+<P>CGI環境から
+<CODE>select</CODE>,<CODE>insert</CODE>, <CODE>update</CODE>, <CODE>delete</CODE>
+権限を有するデータベースサーバー接続が必要です。
+同様にCGI環境以外で管理用アカウントから <CODE>create</CODE> および <CODE>drop</CODE> 権限
+が必要です。
+<P>PHPLIB のコア機能は、アプリケーションの変数スコープ内に次の2つのテーブルを
+必要とします。
+<CODE>active_sessions</CODE> (
+select, insert, update,delete 権限がアプリケーションユーザーに必要。)、
+<CODE>auth_user</CODE> (select 権限がアプリケーションユーザーに必要。
+アプリケーション内部からユーザー管理を行う必要がある場合は、
+insert, update, delete 権限がアプリケーションユーザーに必要。)
+
+<P>拡張機能では、他のテーブルも必要になる可能性があります。
+<P>
+<H3>名前空間に対する要求</H3>
+
+<P>
+<P>PHPLIB は、コア機能に関して出来るだけ中立な名前空間を構成するように作成されています。
+デフォルトではHTMLは生成されず、
+グローバルな名前空間において小数の名前しか使用しません。
+定義済みのクラス、
+<CODE>DB_Sql</CODE>, <CODE>DB_SAM</CODE>,
+<CODE>CT_Sql</CODE>, <CODE>Session</CODE>, <CODE>Auth</CODE>, <CODE>Perm</CODE>,
+<CODE>User</CODE>
+に関するクラス名が定義されます。
+加えて、クラス名 <CODE>DB_Example</CODE>,
+<CODE>Example_CT_Sql</CODE>, <CODE>Example_Session</CODE>,
+<CODE>Example_Auth</CODE>,
+<CODE>Example_Challenge_Auth</CODE>,
+<CODE>Example_Perm</CODE>, <CODE>Example_User</CODE> が <CODE>local.inc</CODE> の
+サンプル設定で定義されます。
+しかし、これらの名前はアプリケーション開発者によりカスタマイズすることができます。
+PHPLIB はページ管理用の関数として、
+<CODE>page_open()</CODE>, <CODE>page_close</CODE>, <CODE>sess_load()</CODE>,
+<CODE>sess_save()</CODE> という名前の関数を定義します。
+グローバル変数 $_PHPLIB (ハッシュ) が使用されます。
+<CODE>page_open()</CODE> が使用されている場合にのみ
+デフォルトでライブラリによりグローバル変数が定義されますが、
+<CODE>page_open()</CODE> 文で要求された各"機能"毎に1つのグローバル
+変数が定義されます。
+これらは、多くとも <CODE>$sess</CODE>, <CODE>$user</CODE>, <CODE>$auth</CODE>, 
+<CODE>$perm</CODE> です。
+<P>拡張機能または HTML ウィジェットをインクルードした場合、
+他のクラス名、関数名、変数がグローバルな名前空間に
+定義される可能性があります。
+<P>
+<H3>2000年問題への対応</H3>
+
+<P>
+<P>PHPLIB は、使用するデータベースの <CODE>active_sessions</CODE> テーブル
+のカラム <CODE>changed</CODE> に date フィールドを使用しています。
+<CODE>changed</CODE> フィールドは、破棄されたセッションを掃除するための
+ガベージコレクションに使用されます。date フィールドは
+<CODE>YYYYMMDDhhmmss</CODE> というフォーマットの14文字のフィールドで、
+date フィールドは4桁の年を保持しており、
+2000年以降も正しく処理することができます。
+<P>PHPLIB はクライアントのブラウザにクッキーを設定します。
+これらのクッキーは、デフォルトの有効期限はセッションが終わるまでと
+なっています。このため、これらのクッキーは期限切れにはなりませんが、
+ディスクには書きこまれません。日付に関する計算は含まれていません。
+<P>Sessionクラスの $lifetime を定義することにより
+PHPLIBにおいて有効期限を設けてクッキーを設定することが可能です。
+これを行った場合、Y2K 問題に対応するかどうかは、
+クライアントのブラウザおよびクライアントのオペレーティング
+システムの日付処理に依存します。
+MS-DOS/Windows 3.11 システム上の期限の長いクッキーおよび
+全てのブラウザには既知の問題があります。
+<P>PHPLIB は、内部的にPHP3 言語の関数mktime()とdate()および
+UNIX の time_t 型データを使用して日付に関する計算を行います。
+32ビットUNIXの time_t 型データは、GMT 1970年1月1日の真夜中から
+の秒数を数えており、2038 年にはオーバーフローします。
+<P>PHPLIB は 2038 年まで動作し、UNIX time_t の時間が拡張されれば
+それ以降も動作します。
+PHPLIB は、PHPLIB アプリケーション、PHP3 インタプリタ、
+サーバーのオペレーティングシステム、サーバーソフトウエア、
+クライアントブラウザ、クライアントのオペレーティングシステム、
+インストールを行った他のソフトウエアにおける日付やY2K に関する問題から
+ユーザーを保護するものではありません。
+<P>
+<H2><A NAME="ss2.4">2.4 インストール手順 </A>
+</H2>
+
+<P><CODE>mod_php</CODE> に関する注意: 
+次の手順は、モジュール版と同様にCGI版のPHPにも適用されます。
+<CODE>mod_php</CODE>を使用している場合、
+<CODE>php3.ini</CODE> ファイルを強制的に再ロードするために
+Webサーバーを再スタートする必要があります。
+<P><CODE>mod_php</CODE>を使用している場合、別の設定用オプションが使用可能です。
+後節の「<CODE>mod_php</CODE> で PHPLIBを使用する」を参照下さい。
+<P>
+<DL>
+<P>
+<DT><B>ライブラリ設定</B><DD><P>次のようにcgiと並列してディレクトリphpを作成して下さい。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+/home/www/servers/phplib.netuse.de/pages   &lt;- ドキュメントルート
+                                   cgi     &lt;- php バイナリ
+                                   php     &lt;- インクルードとプリペンド
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>このディレクトリ phpをPHP のインクルードディレクトリとして設定して下さい。
+具体的には、
+<CODE>include_path = /home/www/servers/phplib.netuse.de/php</CODE>
+を <CODE>cgi/php3.ini</CODE> に加えて下さい。
+設定時にインクルードパスが定義されている場合、既存のインクルードパスに
+使用するシステム用のセパレータ(UNIXでは":"、Windowsでは";")を
+使用してPHPLIBのインクルードパスを追加して下さい。
+インクルードパスの定義自体は、ページにコードをインクルードするわけでは
+ありません。この定義は、
+<CODE>require()</CODE> および <CODE>include()</CODE> 文で参照された
+ファイルを探すディレクトリをPHPインタプリタに教えるだけです。
+<P>配布ファイルのディレクトリ<CODE>php</CODE>から全てのファイルを
+ディレクトリ <CODE>php</CODE> にコピーして下さい。
+配布ファイルのディレクトリ<CODE>pages</CODE>から全てのファイルを
+ドキュメントルートにコピーしてください。
+<P><CODE>documentation.txt</CODE> を手に取り、読んでください。
+<P>
+<DT><B>データベース MySQL へのアクセス</B><DD><P>
+以下の情報は MySQL のみに適用されます。
+現在のところ、他のデータベースサーバーに関する情報は提供されていません。
+本節をコピーし、使用するデータベースサーバー用に修正し、
+作者に提供して下さい。この情報は、将来のPHPLIBに含まれることになります。
+<P><CODE>prepend.html</CODE>を編集して下さい。
+最初にある<CODE>require()</CODE>文を<CODE>require("db_mysql.inc");</CODE>
+に変更して下さい。これにより、MySQLデータベースインターフェース
+がインクルードされます。
+(他のデータベース用のインターフェースは、
+<CODE>db_&lt;データベース名&gt;.inc</CODE> で提供されています。
+<CODE>require()</CODE> 文にこれを反映する必要があります。)
+<P>データベースサーバーの名前が、
+<CODE>database.netuse.de</CODE> 、CGIユーザーが<CODE>webuser</CODE> であり、
+データベース <CODE>myapp</CODE> にアクセスすると仮定した場合、
+次のようにして下さい。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+mysql -h database -u webuser myapp
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>これが動作しない場合、管理者としてデータベースに接続し、
+適当なmysqlアクセス権限を作成して下さい。
+配布ファイルのサブディレクトリ<CODE>stuff</CODE>にある
+<CODE>create_database.mysql</CODE>を実行し、
+データベース <CODE>active_sessions</CODE> および <CODE>auth_user</CODE> 
+を作成し、同時にサンプルユーザー <CODE>kris</CODE> をパスワード 
+<CODE>test</CODE> で作成します。
+再度、上記のように接続を試みて下さい。
+<CODE>select * from active_sessions</CODE>が実行できますか?
+そして、<CODE>insert into active_sessions values ("1", "2", "3", "")</CODE> 
+や <CODE>delete from active_sessions</CODE> はどうですか? 
+<CODE>select * from auth_user</CODE> は実行できますか?
+<P><EM>注意:</EM> 複数のデータベース用に別のデータベース作成用スクリプトが
+配布ファイルのディレクトリ <CODE>stuff</CODE> にあります。
+<P>
+<DT><B>PHP ファイルとライブラリのマージ</B><DD><P>
+<CODE>include</CODE> または <CODE>auto_prepend_file</CODE> のどちら
+を使用するかを決めてください。
+ここでは<CODE>auto_prepend_file</CODE>を使用し、
+<CODE>auto_prepend_file =
+/home/www/servers/phplib.netuse.de/php/prepend.html</CODE> を
+<CODE>php3.ini</CODE> に加えます。
+<P>全てのクラスを<CODE>prepend.html</CODE>で読みこむ必要はなく、
+コア機能に関するファイルのみ、つまり、
+<CODE>db_xxx.inc</CODE>,
+<CODE>ct_sql.inc</CODE>, <CODE>session.inc</CODE>,
+<CODE>auth.inc</CODE>, <CODE>perm.inc</CODE>, <CODE>user.inc</CODE>, 
+<CODE>local.inc</CODE> , <CODE>page.inc</CODE>
+を読みこむ必要があります。
+本ライブラリは、他の、より重要性の低いクラスも提供し、これらは
+ページ毎に手動でインクルードすることができます。
+いくつかのクラスは、使用時に持続性を有します。
+これらのクラスを正常に動作させるためには、
+<CODE>prepend.html</CODE> ファイルでクラス定義をインクルードしておく必要があります。
+詳細は、これらのクラスの使用法を参照下さい。
+<P>上記の手順を行った後、<CODE>/index.html</CODE> をアクセスして下さい。
+ページを再ロードするとカウンタが増加します。
+また、データベースの <CODE>active_sessions</CODE> がこのセッションを反映しているか
+を確認して下さい。
+<P>
+<DT><B>サポート用MLへの加入</B><DD><P>
+メーリングリスト <A HREF="mailto:phplib@lists.netuse.de">phplib@lists.netuse.de</A>
+に加入して下さい。
+本文に <CODE>subscribe</CODE> と書いたメールを
+<A HREF="mailto:phplib-request@lists.netuse.de">phplib-request@lists.netuse.de</A> に送り、
+指示に従って下さい。あなたの経験を共有して下さい。
+</DL>
+
+<P>
+<H2><A NAME="ss2.5">2.5 <CODE>auto_prepend_file=</CODE>の替わりに<CODE>include()</CODE>を使用する</A>
+</H2>
+
+<P>PHPLIBのコア機能をロードするために <CODE>auto_prepend_file</CODE> を使用したくない場合、
+そのクラスのクラス定義を手動でクラスを使用する各ページにロードすることが可能です。
+<P>
+前に概説したように <CODE>*.inc</CODE> ファイルの場所を反映するために
+<CODE>php3.ini</CODE> ファイルに正しく<CODE>include_path=</CODE>-文を
+定義する必要があります。
+こうすると、各ページの最初の行に<CODE>include("prepend.html")</CODE> と書くことにより
+全てのコア機能をロードすることができます。
+<P>性能を更に最適化するために、コア機能の全てを必要としない場合には
+先頭に付加するファイルの内容を最小化することが可能です。
+<CODE>auth.inc</CODE>, <CODE>perm.inc</CODE>, <CODE>user.inc</CODE> の
+機能を必要としない場合には、これらを省略することが可能です。
+(これらのクラスは相互に依存していることに注意して下さい!)
+<P>
+<H2><A NAME="ss2.6">2.6 mod_php(Apache モジュール)でPHPLIBを使用する</A>
+</H2>
+
+<P>
+<P>
+PHP3 をモジュールとして組み込む Web サーバー(具体的にはApache)に
+PHPLIB をインストールする際には、PHP3 本体の実行用の設定を
+行う場所が異なります。
+PHP3 のコンパイル時には、多くのパラメータを設定することが可能です。
+(<CODE>phpinfo()</CODE>のPHPセクションを参照下さい)
+その多くは、ファイル <CODE>php3.ini</CODE> で上書きすることが可能です。
+このファイルの位置は、<CODE>phpinfo()</CODE>の出力に表示されています。
+<P>
+PHP3 をモジュールとして組み込んでいる場合、
+設定を指定する場所の選択肢はより多くなります。
+<CODE>httpd.conf</CODE> で定義、各ディレクトリのファイル <CODE>.htaccess</CODE>で定義、
+という順番で設定が上書きされます。
+これらのファイルの設定用ディレクティブは、<CODE>php3.ini</CODE> のものと同じですが、
+Apache 設定用キーワードと干渉しないように前に<CODE>php_</CODE>が付きます。
+また、Apache 設定用キーワードと同様に、等号("=")は使用しません。
+
+<CODE>php3.ini</CODE>の設定用ディレクティブに<CODE>x=y</CODE>となっていた場合、
+Apacheの設定では替わりに<CODE>php3_x y</CODE>とする必要があります。
+つまり、キーワードの<CODE>php3_</CODE>を前に付けて、等号を省略する必要があります。
+設定用ディレクティブを書き間違えた場合、Webサーバーで500番のエラーが発生します。
+Webサーバー用設定の<CODE>ErrorLog</CODE>で指定したログファイルに
+エラーに関するより詳細な情報が得られます。
+<P><EM>例:</EM> 
+以下では、<CODE>php3.ini</CODE> の設定に関する議論を行います。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+include_path = "/bla"
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P><CODE>mod_php</CODE> のユーザーは、<CODE>httpd.conf</CODE>で次のように
+別の設定に変更することができます。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+&lt;Directory /home/www/servers/phplib.netuse.de/pages&gt;
+php3_include_path "/bla"
+&lt;/Directory&gt;
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>PHPLIBのユーザーに特に関連するのは、次のディレクティブでしょう。
+<P>
+<BLOCKQUOTE><CODE>
+<HR>
+<PRE>
+;;;;;;;;;;;;;;;;;
+; Data Handling ;
+;;;;;;;;;;;;;;;;;
+magic_quotes_gpc = Off    ; magic quotes for incoming 
+                          ; GET/POST/Cookie data
+magic_quotes_runtime = Off; magic quotes for runtime-generated data,
+                          ; e.g. data from SQL, from exec(), etc.
+magic_quotes_sybase = Off ; Use Sybase-style magic quotes 
+                          ; (escape ' with '' instead of \')
+track_vars = On           ; enable $PHP_GET_VARS[], $PHP_POST_VARS[] 
+                          ; and $PHP_COOKIE_VARS[] arrays
+
+; automatically add files before or after any PHP 3.0 document
+auto_prepend_file = (add path to prepend.html here)
+auto_append_file  =
+
+;;;;;;;;;;;;;;;;;;;;;;;;;
+; Paths and Directories ;
+;;;;;;;;;;;;;;;;;;;;;;;;;
+include_path      = (add path to the directory with all .inc files)
+</PRE>
+<HR>
+</CODE></BLOCKQUOTE>
+<P>
+これらの設定法は、(ISPを運営する場合等で)複数の仮想ホストを管理する場合に
+非常に便利です。
+この場合、<CODE>&lt;VirtualHost&gt;</CODE> ブロックの中か
+クライアントのディレクトリのファイル<CODE>.htaccess</CODE>の都合の良い方に
+php3用ディレクティブを置くことが可能です。
+<P>
+<P>
+<HR>
+<A HREF="documentation-3.html">次</A>
+<A HREF="documentation-1.html">前</A>
+<A HREF="documentation.html#toc2">目次</A>
+</BODY>
+</HTML>

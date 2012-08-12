@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+  "http://www.w3.org/TR/REC-html40/loose.dtd">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=EUC-JP">
+<META name="description" content="__COMMENT__">
+<META http-equiv="Content-Style-Type" content="text/css">
+<META http-equiv="Content-Script-Type" content="text/javascript">
+<TITLE>PHP LISENCE FAQ</TITLE>
+<LINK rel="stylesheet" href="../../style.css">
+<!--<SCRIPT language="JavaScript" src="rollover.js">
+</SCRIPT> -->
+</HEAD> 
+
+<BODY>
+
+<H1>ライセンスに関するFAQ</H1>
+
+<TABLE>
+<tr><td><b>Q.</b></td><td bgcolor="#ffbbaa"> なぜ、PHP 4.0 は GNU Public License (GPL)に基づかなくなったのですか?</td></tr>
+<tr><td><b>A.</b></td><td bgcolor="#aaffbb"> いくつかの理由があります。
+PHP 3.0 でさえユーザーの意志により PHP ライセンスの元で配布することができることを
+まず最初に述べておきます。
+この理由は、GPLの拘束が厳し過ぎるためです。
+つまり、営利企業がPHPと共にPHPに基づくアプリケーションを配布することを妨げたくはなく、
+また、営利企業がPHPに貢献することができるようにしたいからです。
+(ほぼ全ての営利企業は法的な問題によりGPL化されたソフトウエアにコードを提供することはできません)
+そこで、GPLから完全に離れるという決断を行ないました。</td></tr>
+<tr><td><b>Q.</b></td><td bgcolor="#ffbbaa"> 簡単に言うと、PHP ライセンスは何を意味しますか?</td></tr>
+<tr><td><b>A.</b></td><td bgcolor="#aaffbb"> 以下の文はPHPライセンスを置き換えるものではなく、
+このライセンスが意味するところを一般的な表現で伝えようとするものです。
+本質的に、PHPライセンスは、フリーウエア・オープンソース・商用にかかわらずPHPを自由に使用・配布・修正
+する権利を保障します。
+商用目的でPHPを配布する場合、ユーザーが買ったパッケージがフリーソフトウエアであるPHPを含んでいるということを
+明確にユーザーに示す記述を行なう必要があります。
+ZendがQPLと本質的に同じであるZendライセンスの基で配布されることも記述しておきます。
+これに対する詳細な情報に着いては、次のFAQを呼んで下さい。
+簡単に言うと、PHPライセンスの第二版はPHPを以前よりもより自由にするものです。</td></tr>
+
+<tr><td><b>Q.</b></td><td bgcolor="#ffbbaa"> Zend ライセンスには、
+Zendに基づくアプリケーションを売る際に金を要求してはいけないということが記述されています。
+これは、自分が構築したPHPスクリプトまたはWebサイトを売ってはいけないということを意味しますか？
+<tr><td><b>A.</b></td><td bgcolor="#aaffbb"> <strong>いいえ</strong>  全く違います。
+この文は、PHPが実行するスクリプトではなく、Zendに基づき構築されたソフトウエアのみに関するものです。
+PHPまたはZendライセンスに全く抵触せずに
+商用・非商用によらずPHPソースコードを自由に配布することが出来ます。
+PHP自体を商用アプリケーションと共に好きなだけパッケージ化することも可能です。
+Zendライブラリを直接使用する商用アプリケーションを構築することだけは出来ません。
+</td></tr>
+
+<tr><td><b>Q.</b></td><td bgcolor="#ffbbaa"> では、Zend ライセンスの趣旨は何ですか?  留意すべき点は何ですか?</td></tr>
+<tr><td><b>A.</b></td><td bgcolor="#aaffbb"> 二つの場合には、Zendライセンスに留意する必要があります。
+まず、Zendエンジンに対するパッチを公開する場合です。Zend ライセンスは、
+我々(Andi Gutmans と Zeev Suraski) がロイヤリティー・フリーでこれらのパッチを使用することを許可しています(詳細はライセンスを参照下さい)。
+第二に、このライセンスはZendライブラリを商用アプリケーションを構築するために使用することを禁止しています。
+(例えば、開発する商用ワードプロセッサーのマクロ言語として)Zendライブラリを商用に使用したい場合、
+ライセンス情報に関して我々に問い合わせる必要があります。
+繰り返しますが、この条項は、PHPに関しては全く適用されません。
+
+<tr><td><b>Q.</b></td><td bgcolor="#ffbbaa">QPLに関するより詳細な情報はどこにありますか?</td></tr>
+<tr><td><b>A.</b></td><td bgcolor="#aaffbb"> QPLの作者であるTroll Tech ASは、
+より簡単に理解できる注釈付きのライセンスを公開しています。
+これを <a href="http://www.troll.no/qpl/annotated.html" target="_top">http://www.troll.no/qpl/annotated.html</a> で見ることが出来ます。
+
+</TABLE>
+
+<HR>
+以上の文書は、
+<A HREF="http://php.net/license/" target="_top">
+http://php.net/license/</A> の和訳版です。
+本文には誤訳・意訳が含まれる場合があります。
+正確な内容については、オリジナルのドキュメントを参照下さい。
+誤訳等により生じたいかなる損害も翻訳者は負わないものとします。
+
+<HR>
+<div class="footer"><a href="http://www.apache.org/"><img src="../../images/apache_pb.gif" width="259" height="32" border="0" align="left" alt="APACHE.ORG"></a>All 
+  Rights Reserved, Copyright (C) 2000 Japan PHP User's Group<br>
+  $Id: license-faq.html,v 1.2 2006/05/09 16:59:22 jokagi Exp $<br>
+  <a style="font-size: 10pt" href="mailto:webstaff@php.gr.jp">webstaff@php.gr.jp</a> </div>
+
+
+</BODY>
+</HTML>
