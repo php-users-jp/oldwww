@@ -97,13 +97,13 @@ CGI版を使用した場合、持続的データベース接続が使用できないため、
 完全なインストール手順およびトラブル解決策に関する情報に
 ついては、この文書の第2章を参照下さい。
 <P>PHPLIBをインストールする前に、Webサーバーを起動し、
-拡張子 .php を付けたファイルを実行してみてください。
+拡張子 .html を付けたファイルを実行してみてください。
 その際、<CODE>&lt;?php phpinfo() ?&gt;</CODE> という簡単なスクリプトを
 作成してください。
 また、"/" で終わる URL に関するデフォルトファイルとして
 Webサーバーが <CODE>index.html</CODE> と同様に
-<CODE>index.php</CODE> を認識することを確認して下さい。
-(Apache: <CODE>DirectoryIndex index.html index.php</CODE>)
+<CODE>index.html</CODE> を認識することを確認して下さい。
+(Apache: <CODE>DirectoryIndex index.html index.html</CODE>)
 <P>MySQLデータベースサーバーを入手し、実行して下さい。
 空のデータベースをアプリケーション用に作成し、Web サーバープロセスの
 所有者から 
@@ -131,7 +131,7 @@ Webサーバーのルートディレクトリと同じレベルに
 <CODE>php</CODE> ディレクトリを指すように更新します。
 また、<CODE>auto_prepend_file</CODE> 命令が
 そのインクルードディレクトリの中の
-<CODE>prepend.php</CODE> ファイルを指すように更新します。
+<CODE>prepend.html</CODE> ファイルを指すように更新します。
 <P>php3.ini ファイルを更新することができない場合は、
 上記の <EM>非常に重要な注意事項</EM> を読んでいないことになります。
 <P>
@@ -161,7 +161,7 @@ cd を行います。<CODE>local.inc</CODE> を編集します。
 <P>
 <DT><B>手順 8</B><DD><P>クッキーを使用可能にして、Webサーバーの
 URL "/" にアクセスします。
-<CODE>index.html</CODE> がない場合、<CODE>index.php</CODE> が表示されます。
+<CODE>index.html</CODE> がない場合、<CODE>index.html</CODE> が表示されます。
 ページをリロードした際に、表示される number は増加します。
 mysql コマンドクライアントでデータベースに接続し、
 <CODE>select * from active_sessions</CODE> を実行します。
@@ -170,7 +170,7 @@ mysql コマンドクライアントでデータベースに接続し、
 <CODE>val</CODE> のテキストがどうなるかを見てください。
 これが動作している場合、セッションクラスはクッキーモードで動作しています。
 <P>
-<DT><B>手順 9</B><DD><P>次に <CODE>showoff.php</CODE> にアクセスします。
+<DT><B>手順 9</B><DD><P>次に <CODE>showoff.html</CODE> にアクセスします。
 名前 <CODE>kris</CODE> 、パスワード <CODE>test</CODE> でログインします。
 <CODE>active_sessions</CODE> を再度確認して下さい。
 この時、<CODE>Example_Session</CODE> エントリ (<CODE>name</CODE> カラム参照)
@@ -204,7 +204,7 @@ PHPLIB をページを保護したり、パスワードを付加する機能に関して
 <P>
 <DT><B>新規ユーザーの作成</B><DD><P>
 配布ファイル中の <CODE>pages/admin</CODE> ディレクトリから
-<CODE>new_user.php</CODE> を使用してください。
+<CODE>new_user.html</CODE> を使用してください。
 インストール手順に従うことにより、
 WebサーバーのURL <CODE>/admin</CODE> の下に新規ユーザーが利用可能となります。
 <P>マニュアルでユーザーを作成するには、ユーザーIDを得るために
@@ -411,7 +411,7 @@ PHPバイナリをCGIバイナリ用ディレクトリにコピーしてください。
 (このディレクトリはDocumentRoot以下に置くべきではありません!)
 そして、実行可能にして下さい。
 <CODE>php3.ini</CODE> を同じディレクトリにコピーしてください。
-DocumentRoot に <CODE>test2.php</CODE> を作成し、&lt;?php phpinfo() ?&gt; 
+DocumentRoot に <CODE>test2.html</CODE> を作成し、&lt;?php phpinfo() ?&gt; 
 と中に書いて下さい。
 <P>Apache を実行していますか? その場合は、次の記述を設定ファイルに加えてください。
 <P>
@@ -419,8 +419,8 @@ DocumentRoot に <CODE>test2.php</CODE> を作成し、&lt;?php phpinfo() ?&gt;
 <HR>
 <PRE>
 Action       php3-script /cgi/php
-AddHandler   php3-script .php
-DirectoryIndex index.php index.html index.htm
+AddHandler   php3-script .html
+DirectoryIndex index.html index.html index.htm
 FancyIndexing on
 </PRE>
 <HR>
@@ -428,11 +428,11 @@ FancyIndexing on
 <P>
 これにより、
 
-<CODE>.php</CODE> で終わるファイルへの全てのリクエストは
+<CODE>.html</CODE> で終わるファイルへの全てのリクエストは
 <CODE>php3-script</CODE> ハンドラにマップされ、
 内部的にリクエスト <CODE>php3-script</CODE> を処理するURLとして
 <CODE>/cgi/php</CODE>が定義されます。
-<P><CODE>/test2.php</CODE> へのリクエストを行い、
+<P><CODE>/test2.html</CODE> へのリクエストを行い、
 実行されているかを確認して下さい。
 (いくつかの色の定義に関して) <CODE>php3.ini</CODE> を変更し、再ロードして下さい。
 その変更は、<CODE>phpinfo()</CODE> の出力に反映されていますか？
@@ -446,7 +446,7 @@ PHP は最新版ですか?
 使用するデータベースインタフェースが<CODE>phpinfo()</CODE> の出力に
 表示されていますか？そうでない場合は再コンパイルして下さい。
 <P>
-同様にURL <CODE>/cgi/php/test2.php</CODE> として<CODE>/test2.php3</CODE>
+同様にURL <CODE>/cgi/php/test2.html</CODE> として<CODE>/test2.php3</CODE>
 にアクセスすることができますか? 出来る場合は、
 <CODE>--enable-force-cgi-redirect</CODE> を付けて PHP インタプリタが
 コンパイルされていません。
@@ -456,7 +456,7 @@ PHPLIB は、このインタプリタでは動作しません。
 <DT><B>PHP インタプリタ (mod_phpの場合)</B><DD><P>
 <P>サーバーが既に正確に設定されていることを仮定し
 (<CODE>srm.conf</CODE>中にPHPに関する記述を書くことを忘れないで下さい!)、
-次のファイルを入力し、DocumentRoot に<CODE>test2.php</CODE>として保存します。
+次のファイルを入力し、DocumentRoot に<CODE>test2.html</CODE>として保存します。
 <P>
 <BLOCKQUOTE><CODE>
 <HR>
@@ -478,7 +478,7 @@ PHPはPHPLIBを正しく読みこんでいますか？
 <HR>
 <PRE>
 include_path = 全ての .inc ファイルがあるディレクトリへのパス名
-auto_prepend_file = prepend.php へのパス
+auto_prepend_file = prepend.html へのパス
 track_vars = On
 </PRE>
 <HR>
@@ -538,7 +538,7 @@ Webサーバーが次のページのデータベースをアクセスできるかどうかテストして下さい。
 壊れています。
 <P>
 <DT><B>セッションの動作を確認する</B><DD><P>
-配布ファイルと共に提供されているページ <CODE>/index.php</CODE> を
+配布ファイルと共に提供されているページ <CODE>/index.html</CODE> を
 アクセスして下さい。
 このページは、ブラウザにクッキーを設定します。クッキーの設定を許可して下さい。
 <P>
@@ -553,7 +553,7 @@ Webサーバーが次のページのデータベースをアクセスできるかどうかテストして下さい。
 コマンドラインからデータベースに接続し、データベースの許可属性を確認して下さい。
 <P>
 <DT><B>認証の動作を確認する</B><DD><P>
-配布ファイルで提供されている <CODE>/showoff.php</CODE> をロードしてみてください。
+配布ファイルで提供されている <CODE>/showoff.html</CODE> をロードしてみてください。
 このページはログインを要求します。
 <CODE>kris</CODE> としてパスワード <CODE>test</CODE> を用いてログインして下さい。
 ログインが成功したら、

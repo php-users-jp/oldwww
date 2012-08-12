@@ -25,9 +25,9 @@
 しばしば必要とされるアプリケーション機能を提供する非GUIクラスを
 カバーしています。いくつかの拡張クラスはコア機能に依存していますが、
 その他は独立したクラスとなっています。
-<p>拡張クラスは <code>prepend.php</code> によって自動的にインクルー
+<p>拡張クラスは <code>prepend.html</code> によって自動的にインクルー
 ドされない点でコアクラスとは区別されます。必要に応じて明示的に
-クラス定義をインクルードするか <code>prepend.php</code> を改変する必要があります。
+クラス定義をインクルードするか <code>prepend.html</code> を改変する必要があります。
 <P>
 <H2><A NAME="ss4.1">4.1 Cart</A>
 </H2>
@@ -50,7 +50,7 @@ Cartクラスは、その <code>start()</code> 関数でセッション変数として
 <p><em>注意:</em> <code>Cart</code> は<em>リリース5</em>まではコアクラスで
 した。もしあなたのアプリケーションが <code>Cart</code> クラスを使って
 いるなら、あなたは明示的にあなたのファイルで指示されている <code>
-prepend.php</code>ファイル内に <code>include("cart.inc")</code> 文を
+prepend.html</code>ファイル内に <code>include("cart.inc")</code> 文を
 加え<em>なければなりません</em>。
 <p><em>注意:</em>ページ管理関数は<code>cart</code>機能について
 Cart クラスを準備し開始する機能をもはやサポートしません。
@@ -287,8 +287,8 @@ price</code> があります。この最小限の定義に品種グループを追加するとか、
 ページに<code>Cart</code> の定義を含める必要があります。
 <br>
 <code>したがって、cart.inc</code>により<code>Cart</code>定義をインクルードする設定を
-指定するのに適切な場所は<code>prepend.php</code>です。
-<code>prepend.php</code> を編集し、このファイルのコメントにしたがって
+指定するのに適切な場所は<code>prepend.html</code>です。
+<code>prepend.html</code> を編集し、このファイルのコメントにしたがって
 <code>require("cart.inc")</code>を加えます。
 </LI>
 <LI><code>Cart</code> のサブクラスを目的に応じて作成します。
