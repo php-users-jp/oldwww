@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+  "http://www.w3.org/TR/REC-html40/loose.dtd">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=EUC-JP">
+<META name="description" content="__COMMENT__">
+<META http-equiv="Content-Style-Type" content="text/css">
+<META http-equiv="Content-Script-Type" content="text/javascript">
+<TITLE>PHP 4.2.1 Release Announcement</TITLE>
+<LINK rel="stylesheet" href="../style.css">
+<!--<SCRIPT language="JavaScript" src="rollover.js">
+</SCRIPT> -->
+</HEAD> 
+
+<BODY>
+
+<H1>PHP 4.2.1 Release Announcement</H1> 
+
+<DIV class="note">
+この和訳は 藤本@アストラザスタジオ 様に頂きました。ありがとう御座います。
+</DIV>
+<br>
+<DIV class="note">
+<b>ご注意</b><br>
+藤本様に質問のメールなどを出すのはご遠慮ください。<br>
+和訳に関する質問やミスや改良案などございます方は<a href="mailto:webstaff@php.gr.jp">webstaff</a>までお願いします。<br>
+原文は<a href="http://www.php.net/release_4_2_1.php">http://www.php.net/release_4_2_1.php</a>になりますのでそちらをご参照下さい。<br>
+また、技術的な内容に関しましては<a href="http://ns1.php.gr.jp/mailman/listinfo/php-users">PHP-usersメーリングリスト</a>へお願いします。
+</DIV>
+<br>
+<HR>
+<br>
+<font size="+2">PHP 4.2.1 Release Announcement</font><br>
+<br>
+
+<font size="+1">バグフィックスリリース</font><br>
+<br>
+このバグフィックスリリースでは、以下の修正をはじめとしてPHP 4.2.0で
+発見されたいくつかのバグが修正されています。<br>
+<br>
+<ul>
+  <li>MySQL拡張モジュールでMySQLサーバに接続できない問題の修正
+  <li>COM拡張モジュールでoutprocサーバを使用した場合にクラッシュする問題の修正
+  <li>セッション拡張モジュールのSIDに関するロジックの修正
+  <li>mbstringモジュールの修正(SJISでのディレクトリ名の扱いの修正と
+      mb_output_buffer()の問題の修正)<br>
+	 (訳注：[php-users 6972] [php-users 7067]のスレッド参照)
+  <li>$w = $e = array($sock); のような文でsocket_select()が予期しない
+      動作をする問題の修正
+  <li>domxml拡張モジュールのほぼ完全なDOM準拠といくつかの関数の修正
+  <li>Safeモードでのshow_source, parse_ini_file(), rmdir()関数に
+      チェック処理を追加
+</ul>
+<br>
+PHP 4.2.1における完全な変更点のリストはNEWSファイルにあります。<br>
+(<a href="http://jp2.php.net/ChangeLog-4.php">
+http://jp2.php.net/ChangeLog-4.php</a>)<br>
+<br>
+<font size="+1">互換性</font><br>
+<br>
+PHP 4.2.1ではApache2のサポートが改善されています(が、まだ実験的な
+ステータスにあります)。実運用環境で使用することはお勧めしませんが、
+テストしてバグシステム(<a href="http://bugs.php.net/">
+http://bugs.php.net/</a>)で問題を報告することは歓迎します。<br>
+<br>
+<font size="+1">外部変数</font><br>
+<br>
+PHP 4.2.0での変数の扱いの変更について再度お知らせします。
+外部変数(環境変数、HTTPリクエスト、クッキー、ウェブサーバの情報)は、
+デフォルトではもはやグローバル変数として登録されません。
+これらの外部変数へのアクセスにはPHP 4.1.0で新しく導入された
+スーパーグローバル配列を利用することを推奨します。
+この変更に関数さらなる情報については以下の情報を参照してください。<br>
+<br>
+<ul>
+  <li><a href="http://jp2.php.net/manual/en/language.variables.predefined.php">
+      PHP Manual: Predefined variables</a><br>
+	  (訳注：和訳が追いついていないため、日本語版は少し古いです)
+
+  <li><a href="http://jp2.php.net/release_4_1_0.php">
+      The PHP 4.1.0 release announcement</a><br>
+	  (<a href="./release_4_2_0.html">和訳版</a>)
+
+  <li><a href="http://www.zend.com/zend/art/art-oertli.php">
+      Thomas Oertli's article on secure programming in PHP</a><br>
+</ul>
+
+<br>
+<HR>
+<div class="footer"><a href="http://www.apache.org/"><img src="../images/apache_pb.gif" width="259" height="32" border="0" align="left" alt="APACHE.ORG"></a>All 
+  Rights Reserved, Copyright (C) 2002 Japan PHP User's Group<br>
+  $Id: release_4_2_1.html,v 1.1.1.1 2002/09/22 09:32:20 kawa Exp $<br>
+  <a style="font-size: 10pt" href="mailto:webstaff@php.gr.jp">webstaff@php.gr.jp</a> </div>
+
+</BODY></HTML>

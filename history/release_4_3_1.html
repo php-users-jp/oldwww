@@ -1,0 +1,106 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+  "http://www.w3.org/TR/REC-html40/loose.dtd">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=EUC-JP">
+<META name="description" content="__COMMENT__">
+<META http-equiv="Content-Style-Type" content="text/css">
+<META http-equiv="Content-Script-Type" content="text/javascript">
+<TITLE>PHP 4.3.1 Release Announcement</TITLE>
+<LINK rel="stylesheet" href="../style.css">
+<!--<SCRIPT language="JavaScript" src="rollover.js">
+</SCRIPT> -->
+</HEAD> 
+
+<BODY>
+
+<H1>PHP 4.3.1 Release Announcement</H1> 
+
+<DIV class="note">
+この和訳は 藤本@techstyle.jp 様に頂きました。ありがとう御座います。
+</DIV>
+<br>
+<DIV class="note">
+<b>ご注意</b><br>
+藤本様に質問のメールなどを出すのはご遠慮ください。<br>
+和訳に関する質問やミスや改良案などございます方は<a href="mailto:webstaff@php.gr.jp">webstaff</a>までお願いします。<br>
+原文は<a href="http://www.php.net/release_4_3_1.php">http://www.php.net/release_4_3_1.php</a>になりますのでそちらをご参照下さい。<br>
+また、技術的な内容に関しましては<a href="http://ns1.php.gr.jp/mailman/listinfo/php-users">PHP-usersメーリングリスト</a>へお願いします。
+</DIV>
+<br>
+
+<HR>
+<br>
+<font size="+2">
+PHP Security Advisory: CGI vulnerability in PHP version 4.3.0
+</font><br>
+
+<p><table border="0" cellpadding="0" cellspacing="0">
+<tr><td>Issued on:</td><td>&nbsp;&nbsp;</td><td><b>February 17, 2003</b></td></tr>
+<tr><td>Software:</td><td>&nbsp;&nbsp;</td><td><b>PHP version 4.3.0</b></td></tr>
+<tr><td>Platforms:</td><td>&nbsp;&nbsp;</td><td><b>All</b></td></tr>
+</table></p>
+
+<P>
+PHPグループはPHP 4.3.0のCGI SAPIにセキュリティ上重大な脆弱性があることを確認し
+ました。
+</P>
+
+<br>
+<font size="+1">概要</font><br>
+<br>
+PHPにはCGIバイナリに対する直接のアクセスを防ぐために、configureオプション 
+"--enable-force-cgi-redirect"とphp.iniオプション"cgi.force_redirect"という
+仕組みが用意されています。PHP 4.3.0にはこれらのオプションが無効に
+なってしまうバグがあります。<br>
+<br>
+ノート: このバグは他のSAPIモジュール(ApacheやISAPIモジュール等)には
+まったく影響しません。<br>
+<br>
+<br>
+<font size="+1">影響</font><br>
+<br>
+上記に該当するCGIモジュールがインストールされているウェブサイトに
+アクセスすることが出来る全ての人は、そのウェブサーバが読み込む権限を
+持っている全てのファイルへのアクセスを得ることが出来てしまいます。<br>
+<br>
+また、攻撃者はたとえばウェブサーバのアクセスログのような、CGIの動作によって
+書き込みが行われるファイルにコードを埋め込むことによって、任意のPHPコードを
+実行することも可能です。<br>
+<br>
+<br>
+<font size="+1">解決策</font><br>
+<br>
+PHPグループはこの脆弱性を修正した新しいバージョンのPHP 4.3.1を
+リリースしました。該当するPHPのバージョンを使用しているユーザは、
+この最新のバージョンへのアップグレードが推奨されます。ダウンロードサイトは<br>
+<br>
+　　　　　　
+<A HREF="http://www.php.net/downloads.php">
+http://www.php.net/downloads.php</a><br>
+<br>
+です。ここで4.3.1のソースtar ball、Windows用バイナリ、4.3.0のソースコードに
+対するパッチファイルをダウンロードすることが出来ます。ただし、
+アップグレードはPHP 4.3.0でCGIモジュールを使用している場合のみ必要となります。
+脆弱性の修正以外のバグフィクスはこのリリースには含まれていません。<br>
+<br>
+<br>
+<font size="+1">回避策</font><br>
+<br>
+なし<br>
+<br>
+<br>
+<font size="+1">クレジット</font><br>
+<br>
+PHPグループはこの脆弱性を発見してくれたKosmas Skiadopoulosに感謝します。<br>
+<br>
+
+<HR>
+<div class="footer"><a href="http://www.apache.org/"><img src="../images/apache_pb.gif" width="259" height="32" border="0" align="left" alt="APACHE.ORG"></a>All 
+  Rights Reserved, Copyright (C) 2003 Japan PHP User's Group<br>
+  $Id: release_4_3_1.html,v 1.2 2003/06/15 15:32:17 kawaml Exp $<br>
+  <a style="font-size: 10pt" href="mailto:webstaff@php.gr.jp">webstaff@php.gr.jp</a> </div>
+
+</BODY></HTML>

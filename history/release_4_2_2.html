@@ -1,0 +1,118 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Frameset//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+  "http://www.w3.org/TR/REC-html40/loose.dtd">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=EUC-JP">
+<META name="description" content="__COMMENT__">
+<META http-equiv="Content-Style-Type" content="text/css">
+<META http-equiv="Content-Script-Type" content="text/javascript">
+<TITLE>PHP 4.1.0 Release Announcement</TITLE>
+<LINK rel="stylesheet" href="../style.css">
+<!--<SCRIPT language="JavaScript" src="rollover.js">
+</SCRIPT> -->
+</HEAD> 
+
+<BODY>
+
+<H1>PHP Security Advisory: Vulnerability in PHP versions 4.2.0 and 4.2.1</H1> 
+
+<DIV class="note">
+この和訳は 藤本@アストラザスタジオ 様に頂きました。ありがとう御座います。
+</DIV>
+<br>
+<DIV class="note">
+<b>ご注意</b><br>
+藤本様に質問のメールなどを出すのはご遠慮ください。<br>
+和訳に関する質問やミスや改良案などございます方は<a href="mailto:webstaff@php.gr.jp">webstaff</a>までお願いします。<br>
+原文は<a href="http://www.php.net/release_4_2_2.php">http://www.php.net/release_4_2_2.php</a>になりますのでそちらをご参照下さい。<br>
+また、技術的な内容に関しましては<a href="http://ns1.php.gr.jp/mailman/listinfo/php-users">PHP-usersメーリングリスト</a>へお願いします。
+</DIV>
+<br>
+<HR>
+<br>
+<font size="+2">PHP Security Advisory: Vulnerability in PHP versions 4.2.0 and 4.2.1</font><br>
+<br>
+
+<p><table border="0" cellpadding="0" cellspacing="0">
+<tr><td>Issued on:</td><td>&nbsp;&nbsp;</td><td><b>2002年7月22日</b></td></tr>
+<tr><td>Software:</td><td>&nbsp;&nbsp;</td><td><b>PHP versions 4.2.0 and 4.2.1</b></td></tr>
+<tr><td>Platforms:</td><td>&nbsp;&nbsp;</td><td><b>全て</b></td></tr>
+</table></p>
+
+<p>PHP GroupはPHP 4.2.0と4.2.1に重大な脆弱性があることを突き止めました。
+侵入者はウェブサーバの動作権限で任意のコードを実行することが出来ます。
+この脆弱性によりウェブサーバは危険な状態となり、特定の条件下において
+一定の権限を持ったアクセスを許容することになります。</p>
+
+<h3>[Description]</h3>
+
+<p>PHPにはHTTP POSTリクエストにより送信されたヘッダを適切に解析するコードが
+含まれています。このコードは"multipart/formdata"リクエストの変数と
+ファイルの各部分を区別するために使用されています。この部分の入力チェックが
+不完全であったために脆弱性が生まれました。</p>
+
+<p>この脆弱性は当該ウェブサーバにHTTP POSTリクエストを送信することが
+できる全てのユーザに対して意味を成します。ローカル、リモートは勿論
+ファイアーウォール越しのユーザでもHTTP POSTさえできれば特権的アクセス権限を
+得ることが出来ます。</p>
+
+<h3>[Impact]</h3>
+
+<p>ローカル、リモートの両方のユーザがこの脆弱性を突くことができ、
+ウェブサーバは危険な状態となります。また特定の条件下において一定の
+権限を持ったアクセスを許容することになります。これまでのところ、
+IA32プラットホームでは任意のコードを実行することは不可能だということが
+判明していますが、それでもPHPや(そして多くの場合)ウェブサーバをクラッシュ
+させることが可能です。</p>
+
+<h3>[Solution]</h3>
+
+<p>PHP Groupは脆弱性を修正した新しいPHPのバージョン4.2.2をリリースしました。
+この問題が影響するバージョン(4.2.0と4.2.1)を使用している全てのユーザは
+この最新のバージョンにアップグレードすることをお勧めします。
+ダウンロードサイトは</p>
+
+
+<ul><a href="http://www.php.net/downloads.php">http://www.php.net/downloads.php</a></ul>
+<ul>(訳注：<a href="http://jp.php.net/downloads.php">http://jp.php.net/downloads.php</a> 
+<a href="http://jp2.php.net/downloads.php">http://jp2.php.net/downloads.php</a>
+ もどうぞ)</ul>
+
+<p>です。ソースコード、Windowsバイナリ、4.2.0と4.2.1への
+ソースコードパッチをダウンロードすることが出来ます。</p>
+
+<h3>[Workaround(回避策)]</h3>
+
+<p>もし、問題となるPHPがインストールされているウェブサーバがHTTP POSTを
+使用していないなら、POSTリクエストを拒否することが出来ます。</p>
+
+<p>例えばApacheウェブサーバでは設定ファイル(httpd.conf)やトップレベルに
+置かれた.htaccessファイルに
+
+      <ul><code>
+      &lt;Limit POST&gt;<br>
+      &nbsp;&nbsp;&nbsp;Order deny,allow<br>
+      &nbsp;&nbsp;&nbsp;Deny from all<br>
+      &lt;/Limit&gt;<br>
+      </code></ul>
+
+と書くことでアクセスを拒否することが出来ます。</p>
+
+<p>ただ、上記の例と競合するような記述が既に無いかどうか
+という点に注意してください。</p>
+
+<h3>[Credits]</h3>
+
+<p>
+PHP Groupはこの脆弱性を発見してくれたStefan Esser of e-matters GmbH
+に感謝します。</p>
+
+<br>
+<HR>
+<div class="footer"><a href="http://www.apache.org/"><img src="../images/apache_pb.gif" width="259" height="32" border="0" align="left" alt="APACHE.ORG"></a>All 
+  Rights Reserved, Copyright (C) 2001 Japan PHP User's Group<br>
+  $Id: release_4_2_2.html,v 1.1.1.1 2002/09/22 09:32:20 kawa Exp $<br>
+  <a style="font-size: 10pt" href="mailto:webstaff@php.gr.jp">webstaff@php.gr.jp</a> </div>
+
+</BODY></HTML>

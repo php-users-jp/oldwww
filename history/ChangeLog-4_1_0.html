@@ -1,0 +1,367 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+  "http://www.w3.org/TR/REC-html40/loose.dtd">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=EUC-JP">
+<META name="description" content="__COMMENT__">
+<META http-equiv="Content-Style-Type" content="text/css">
+<META http-equiv="Content-Script-Type" content="text/javascript">
+<TITLE>PHP 4.1.0 ChangeLog</TITLE>
+<LINK rel="stylesheet" href="../style.css">
+<!--<SCRIPT language="JavaScript" src="rollover.js">
+</SCRIPT> -->
+</HEAD> 
+
+<BODY>
+
+<H1>PHP 4.1.0 ChangeLog</H1> 
+
+<DIV class="note">
+この和訳は 藤本@アストラザスタジオ 様に頂きました。ありがとう御座います。
+</DIV>
+<br>
+<DIV class="note">
+<b>ご注意</b><br>
+藤本様に質問のメールなどを出すのはご遠慮ください。<br>
+ChangeLogは普通の文章ではないので日本語にしづらいものが結構あって、
+必ずしも1 to 1の訳にはなっていません。<br>
+和訳に関する質問やミスや改良案などございます方は<a href="mailto:webstaff@php.gr.jp">webstaff</a>までお願いします。<br>
+原文は<a href="http://www.php.net/ChangeLog-4.php">http://www.php.net/ChangeLog-4.php</a>になりますのでそちらをご参照下さい。<br>
+また、技術的な内容に関しましては<a href="http://ns1.php.gr.jp/mailman/listinfo/php-users">PHP-usersメーリングリスト</a>へお願いします。
+</DIV>
+<br>
+<HR>
+<br>
+<font size="+2">PHP 4.1.0 ChangeLog</font><br>
+<font size="+1">10-Dec-2001</font><br>
+<ul>
+  <li>バッファリングされないクエリ送信時に、MySQLクライアントライブラリの
+  バグによってPHPがハングアップする問題の回避 (Zeev)
+
+  <li>set_time_limit()の結果が、それ以降の全てのApacheの子プロセスに影響を
+  及ぼしてしまうバグの修正 (Zeev)
+
+  <li>新しいXSLT拡張モジュールの追加によるsablotron拡張モジュールの削除 
+  (Sterling)
+
+  <li>WDDX拡張モジュールにおいて、ルート要素がスカラー値であった場合に
+  シリアライズされた内容を復元すると、その値が破壊されることがあることが
+  あるバグの修正 (Andrei)
+
+  <li>ImageColorAt(), ImageColorsForIndex()関数のTrueColorイメージ対応 
+  (Rasmus)
+
+  <li>preg_match_all()が、特定のケースにおいて不正なインデックスを持った
+  結果を返すバグを修正 （Andrei) see also 
+  <a href="http://bugs.php.net/bug.php?id=13635">http://bugs.php.net/bug.php?id=13635</a>
+
+  <li>str_replace()関数の引数searchに配列を指定し、置換の結果いずれかの値が
+  文字列になる場合に発生するクラッシュバグの修正 (Andrei)
+
+  <li>MySQL拡張モジュールのMySQL 4.0対応 (Jani)
+
+  <li>Cobaltシステムでのクラッシュバグの修正。tomc@tripac.comのパッチに拠る。
+  (Jani)
+
+  <li>Dan Libbyによるxmlrpc-epi拡張モジュールの追加
+
+  <li>拡張モジュールにバージョン番号を導入 (Stig)
+
+  <li>version_compare()関数の追加 (Stig)
+
+  <li>pg_last_notice()関数のバグフィクス(PostgreSQLを使用した
+  アプリケーションで、pg_last_notice()関数を使用しない場合でも
+  ランダムにクラッシュする可能性があった) (Zeev)
+
+  <li>DOM-XMLのエラーレベルの修正。E_ERRORの代わりにE_WARNINGが発生する
+  ようになり、DOMXML関数から投げられたエラーをトラップできるようになった。
+  (Sterling)
+
+  <li>mcrypt拡張モジュールで、リスト構造のデストラクタが適切に確保されて
+  いないバグの修正 (Sterling)
+
+  <li>Interbaseで、blob, null, errorの扱いが改善された
+  (Jeremy Bettisのパッチ)
+
+  <li>入力された配列に文字列が含まれる、もしくはキーが数字ではない場合の
+  array_map()関数のクラッシュバグの修正。また、配列が1つだけ渡された場合は、
+  そのキーが返り値の配列でも保存されるようになった。 (Andrei)
+
+  <li>dbase_replace_record()関数のクラッシュバグの修正 
+  (robin.marlow@dps-int.comによるパッチ)
+
+  <li>msql_result()関数のクラッシュバグの修正 (Zeev)
+
+  <li>COM拡張モジュールで、一次元のSafeArrayと列挙型をサポートした。
+  コンポーネントが列挙型をサポートしているかどうかをチェックする
+  com_isenum()関数を追加した。 (Alan, Harald)
+
+  <li>dbase_get_record(), dbase_get_record_with_names()関数のバグを修正。
+  真偽値のフィールドが正しく値を返すようになった。Lawrence E. Widmanの
+  パッチに拠る。 (jani)
+
+  <li>php-configに --version オプションを追加 (Stig)
+
+  <li>既存のバグに対するパッチの導入によるthttpd-2.21bのサポートの改善
+  (Sascha)
+
+  <li>IRCG拡張モジュールに、ircg_get_username()関数の追加、ircg_join()関数に
+  roomkey引数の追加、エラー取得構造の追加、トーカナイザのメッセージ処理
+  スピードの向上、多くのバグフィクスが行われた。(Sascha)
+
+  <li>serializer/deserializerのスピードの改善 (Thies, Sascha)
+
+  <li>文字列から浮動小数点数への変換精度の向上 (Zeev, Zend Engine)
+
+  <li>php.ini-optimizedの名前をphp.ini-recommendedに変更。名前の示す通り、
+  php-ini.distよりもこのファイルをテンプレートとして使用することを推奨
+  するもの。 (Zeev)
+
+  <li>xpath_eval(), php_xpathptr_eval()関数の復活。
+  まだいくつかのメモリリークがある (joey)
+
+  <li>import_request_variables()関数の追加。これによりフォームから送信
+  された値を安全にグローバルスコープにインポートすることができる。
+
+  <li>$_REQUEST配列の導入。これはGET, POST, COOKIEの値を含み、他の
+  新しい変数と同様にスコープを問わずに利用できる。 (Andi & Zeev)
+
+  <li>$HTTP_*_VARSに代わる$_GET, $_POST, $_COOKIE, $_SERVER, $_ENV変数の導入。
+  名前が短くなったのに加えスコープを問わなくなり 'global' による宣言が
+  不要となった。 (Andi & Zeev)
+
+  <li>vprintf(), vsprintf()関数関数の追加。フォーマット引数に続く全ての引数
+  を配列で渡すことが出来る。 (Andrei)
+
+  <li>ImageCreateFromString()関数にGD2イメージタイプのサポートを追加した 
+  (Jani)
+
+  <li>ImageCreateFromGD(), ImageCreateFromGD2(), ImageCreateFromGD2part(), 
+  ImageGD(), ImageGD2()関数の追加 (Jani)
+
+  <li>addcslashes()関数に渡されるcharlistパラメータが不正な場合に警告が
+  発生するようになった。戻り値は以前と同様。 (Jeroen)
+
+  <li>gmp_init()にオプションで引数が追加された。この引数は文字列をGMP数に
+  変換する場合にどの基数を使用するかどうかを指定することが出来る。 (Troels)
+
+  <li>Cyrus-IMAP拡張モジュールを追加した。これはCyrusの高度な機能に直接
+  アクセスするインターフェースを提供する。 (Sterling)
+
+  <li>複数のコメントタグに対応するように read_exif_dat()を改善 (Rasmus)
+
+  <li>array_map()関数にNULLのコールバックが渡された場合のクラッシュバグの
+  修正 (Andrei)
+
+  <li>exif拡張モジュールでのエラーラベルの変更 (E_ERROR -> E_WARNING)
+  (Rasmus)
+
+  <li>pow()関数の実装が新しくなり、可能な場合は整数型を返すようになり、
+  不正な入力があった場合は警告を出すようになった (jeroen)
+
+  <li>trim(), chop(), ltrim()関数に2つ目の引数(オプション)を追加した。これに
+  より取り除く文字を指定できるようになった。 (jeroen)
+
+  <li>スレッドセーフバージョンのPHPにおける、(特にWindows上での)大幅な
+  パフォーマンスの改善 (Andi & Zeev)
+
+  <li>request-shutdownの大幅なパフォーマンスの改善 (Andi & Zeev, Zend Engine)
+
+  <li>いくつかの数学関数の追加 (Jesus)
+
+  <li>付属するexpatのバージョンを 1.92.2 へバージョンアップ (Thies)
+
+  <li>データベースをリスタートした後のOCIPlogon()関数の安定性の改善 (Thies)
+
+  <li>CGIとJavaサーブレッドモードのメインスクリプトで__FILE__定数が使用され
+  た場合のバグの修正。以前はインクルードされたときのみ正しく動作していた。
+  (Andi)
+
+  <li>Zend Engineのハッシュテーブルの実装を改善しスピードを向上させた (Andi,
+  Zend Engine)
+
+  <li>PHPの(include()で使用される)ファイルオープン関数を更新し、include_path
+  から指定されたファイルを見つけられなかった場合に、呼び出しもとの
+  スクリプトのディレクトリをチェックするようにした (Andi)
+
+  <li>定数が破壊され、リクエスト終了時にリソースが正しく解放されないバグの
+  修正 (Zeev)
+
+  <li>str_replace()関数にBoyer-Mooreアルゴリズムを使用するオプションを
+  追加した (Sascha)
+
+  <li>共有メモリによるセッション情報保持モジュールのバグフィクスと改善 
+  (Sascha)
+
+  <li>php.iniの設定オプションにalways_populate_raw_post_dataを追加した。
+  これが有効になっているとPOSTされたMIMEタイプにかかわらず常に
+  $HTTP_RAW_POST_DATAが有効になる。 (Rasmus)
+
+  <li>ftp_fput()関数の第三引数に、socketもしくはpopenのファイルタイプも指定
+  できるようにした (Jason)
+
+  <li>LDAP拡張モジュールの数々のメモリリークの修正 (Stig Venaas)
+
+  <li>インタラクティブモードの改善。これによりPHPの構築方法を問わずに極端な
+  速度の低下を招かずにインタラクティブモードを使用できるようになった。 
+  (Zeev, Zend Engine)
+
+  <li>iptcparse()関数に不正なデータを渡した場合のクラッシュバグの修正 (Thies)
+
+  <li>snmpset()関数失敗時に戻り値がfalseとなるように修正 (Rasmus)
+
+  <li>snmp関数に ホスト名:ポート番号 形式のサポートを追加 
+  (nbougues@axialys.net,Rasmus)
+
+  <li>fdf_set_encoding()関数の追加 (Masaki YATSU, Rasmus)
+
+  <li>リソースの解放順序を保存するように変更。これにより報告されていたOCI8で、
+  "終了していないトランザクションのロールバックに失敗しました(failed to
+  rollback outstanding transactions!)"というメッセージが出る問題が解決
+  された。 (Thies, Zend Engine)
+
+  <li>XMLRPCで抜け落ちたパケットを返すオプションを追加した
+   (Matt Allen,Sascha Schumann)
+
+  <li>range()関数をrange('a', 'z')やrange(9, 0)といった引数を取れるように
+  改善 (Rasmus)
+
+  <li>getmygid()関数とphp.iniの設定値safe_mode_gidの追加。これにより
+  セーフモードでuidの代わりにgidをチェックできるようになった。
+  (James E. Flemer, Rasmus)
+
+  <li>assert()関数が array(&$obj, 'methodname') という構文を受け付けるように
+  変更された (Thies)
+
+  <li>OCI8へ送信する変数が確実に0で終了でするように変更 (Thies)
+
+  <li>mail()関数の5番目の引数を使用してプロセスを起動できるバグの修正 
+  (Derick)
+
+  <li>(OSが値を持っている場合に)ロケールを返すnl_langinfo()関数の追加
+
+  <li>スレッドセーフバージョンで、メモリが破壊される主だったバグの修正 (Zeev)
+
+  <li>CURLOPT_WRITEHEADERオプション使用時のクラッシュバグの修正 (Sterling)
+
+  <li>basename()関数に指定されたサフィックスを除去するオプションを追加 
+  (Hartmut)
+
+  <li>Udm_Set_Agent_Param()関数にUDM_PARAM_VARDIR引数を追加した。これに
+  よりデータディレクトリを指定して個別の検索を行うことが可能となる。
+  この機能を使用するにはmnogoSearch 3.1.13以降が必要。
+
+  <li>セッションにおけるリファレンスの振る舞いを修正。これはWDDXの
+  セッションシリアライザではまだ動作しない。
+  また、セッションのスピードも改善された。 (Thies)
+
+  <li>pcntl(プロセスコントロール)モジュールの実験的な新規追加 (Jason)
+
+  <li>com.allow_dcomに false が設定されている場合のバグの修正 (phanto)
+
+  <li>コンポーネントのインスタンス作成時に、ファイルからtypelibをロード
+  できるようにコンストラクタにさらにパラメータを追加した。
+  (例:DCOMコンポーネントをローカルに登録することなく実行できる) (phanto)
+
+  <li>typelibをtypelibファイルに記述されている完全な名前で指定することを
+  可能にした (Alan Brown)
+
+  <li>ZZiplib拡張モジュールの名前をZip拡張モジュールに変更し、
+  関数名もまた変更されているが、機能は以前のまま。 (Sterling)
+
+  <li>pg_loread()関数の長さの指定をオプションにした。長さが指定されなかった
+  場合は、1kbのチャンクにデータが読み込まれる。 (Sterling)
+
+  <li>pg_loread()に書き込むサイズを指定する3番目の引数を追加 (Sterling)
+
+  <li>CONNECTION_ABORTED, CONNECTION_TIMEOUT, CONNECTION_NORMAL定数の追加 
+  (Zak)
+
+  <li>文字列のオフセットを、文字列の終端を越えて指定できるようにした。
+  この場合、自動的に文字列の長さが延長され、伸ばされた分は空白で埋められる。
+  (Zeev,Zend Engine)
+
+  <li>文字列中の初期化されていないオフセットを読み込もうとした場合に警告を
+  発するようにした (Zeev, Zend Engine)
+
+  <li>非常に大きな負の整数値を使用した場合にオーバーフローを引き起こす
+  いくつかのバグの修正 (Zeev, Zend Engine)
+
+  <li>文字列のオフセットに関する実装のクラッシュバグの修正
+  (Zeev, Zend Engine)
+
+  <li>実行時に継承を行うクラスの、parent::method_name()の実装を改善した。 
+  (Zeev, Zend Engine)
+
+  <li>date()関数に'W'フラグを追加した。これは一年の週の数をISO 8601標準に
+  従って返す。 (Colin)
+
+  <li>PostgreSQLドライバを、リザルトセットを走査するときに列数を内部でも
+  数えるように変更した。(gvz@2scale.net)
+
+  <li>ext/mysql/libmysqlのバージョンを 3.23.39へアップデート。互換性の向上、
+  かなバグの修正が行われれている。 (tim@mysql.com)
+
+  <li>定数の名前とそれにマップされた値で構成される連想配列を返す 
+  get_defined_constants()関数の追加 (Sean)
+
+  <li>mailparse拡張モジュールの新規追加。これによりMIME形式のメールを
+  解析/操作できる (Wez)
+
+  <li>スタンドアローンのDSO拡張モジュール作成時に HAVE_CONFIG_H を定義
+  するように変更 (Stig)
+
+  <li>printf/sprintfへの符号無しlongを表す 'u' 修飾子の追加 (Derick)
+
+  <li>IRIXとの互換性の改善 (Sascha)
+
+  <li>bzopen()関数に不正なファイルを指定した場合のクラッシュバグの修正 (Andi)
+
+  <li>mcrypt拡張モジュールのクラッシュバグの修正 (Derick)
+
+  <li>ImageFilledArc()関数に、描画される曲線が円となることを指定する
+  IMG_ARG_ROUNDEDオプションを追加した (Sterling)
+
+  <li>socket拡張モジュールで、ソケットディスクリプタを指すlong値の使用を止め、
+  代わりにリソースを使用するようにした。ソケット関数は、C言語に対応した
+  名前からPHPの標準的命名規則に従ったものに変更された。socket拡張モジュールが
+  Win32で使用できるようになった (Daniel)
+
+  <li>ファイルシステム全体のサイズを返す disk_total_space()関数の追加 
+  (Steven Bowerによるパッチ)
+
+  <li>確立された関数の命名規則に従って diskfreespace()関数の名前を
+  disk_free_space()に変更 (Jon)
+
+  <li>バグ#2181の修正。本文の形式が7-bitエンコーディングでplain text
+  である場合はunsetされた値ではなく0を返すようになった。 (Vlad)
+
+  <li>call_user_*()関数で、関数/メソッドを呼び出す際に引数をリファレンス渡し
+  できないバグを修正 (Andrei)
+
+  <li>com_release($obj)とcom_addref($obj)関数を追加し、関連付けられた
+  クラスメンバ$obj->Release()と$obj->AddRef()によりCOMコンポーネントを
+  より細かく制御できるようにした (phanto)
+
+  <li>dotnet_load()関数にコードページを指定する引数を追加した (phanto)
+
+  <li>使用最大メモリのログ出力の追加。--enable-memory-limitを使用し、Apache
+  1.xの設定ファイルのログ出力フォーマット命令(LogFormat)に
+  "%{mod_php_memory_usage}n"を追加することでスクリプトが使用した
+  最大メモリサイズが分かるようになった。 (Thies)
+
+  <li>fstat()は文字列、stat()は数字のインデックスを持つ配列を返すようにして、
+  両者の違いを明確にした (Jason)
+
+  <li>定数を再登録した際のメモリリークの修正 (Sascha, Zend Engine)
+</ul>
+
+<HR>
+<div class="footer"><a href="http://www.apache.org/"><img src="../images/apache_pb.gif" width="259" height="32" border="0" align="left" alt="APACHE.ORG"></a>All 
+  Rights Reserved, Copyright (C) 2001 Japan PHP User's Group<br>
+  $Id: ChangeLog-4_1_0.html,v 1.1.1.1 2002/09/22 09:32:20 kawa Exp $<br>
+  <a style="font-size: 10pt" href="mailto:webstaff@php.gr.jp">webstaff@php.gr.jp</a> </div>
+
+</BODY></HTML>

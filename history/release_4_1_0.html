@@ -1,0 +1,164 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+  "http://www.w3.org/TR/REC-html40/loose.dtd">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=EUC-JP">
+<META name="description" content="__COMMENT__">
+<META http-equiv="Content-Style-Type" content="text/css">
+<META http-equiv="Content-Script-Type" content="text/javascript">
+<TITLE>PHP 4.1.0 Release Announcement</TITLE>
+<LINK rel="stylesheet" href="../style.css">
+<!--<SCRIPT language="JavaScript" src="rollover.js">
+</SCRIPT> -->
+</HEAD> 
+
+<BODY>
+
+<H1>PHP 4.1.0 Release Announcement</H1> 
+
+<DIV class="note">
+この和訳は 藤本@アストラザスタジオ 様に頂きました。ありがとう御座います。
+</DIV>
+<br>
+<DIV class="note">
+<b>ご注意</b><br>
+藤本様に質問のメールなどを出すのはご遠慮ください。<br>
+和訳に関する質問やミスや改良案などございます方は<a href="mailto:webstaff@php.gr.jp">webstaff</a>までお願いします。<br>
+原文は<a href="http://www.php.net/release_4_1_0.php">http://www.php.net/release_4_1_0.php</a>になりますのでそちらをご参照下さい。<br>
+また、技術的な内容に関しましては<a href="http://ns1.php.gr.jp/mailman/listinfo/php-users">PHP-usersメーリングリスト</a>へお願いします。
+</DIV>
+<br>
+<HR>
+<br>
+<font size="+2">PHP 4.1.0 Release Announcement</font><br>
+<br>
+長いQA(Quality Assurance)プロセスを経て、ついにPHP 4.1.0がリリースされました。
+<a href="http://www.php.net/downloads.php">http://www.php.net/downloads.php</a>
+でダウンロードできます。<br>
+<br>
+PHP 4.1.0 に含まれる重要な更新は以下の通りです：<br>
+<ul>
+  <li>新しい(フォームから送信された値等の)入力インターフェースによる
+    セキュリティの改善(後述)
+  <li>全体的なパフォーマンスの向上
+  <li>Windowsでのパフォーマンスと安定性の劇的な向上<br>
+    Windows上でのマルチスレッドサーバモジュール(ISAPI, Apache等)だと、
+    負荷が掛かった状態でも30倍程度速度が向上します。Windows版PHPの改善に
+    協力してくれたBrett BrewerとMicrosoftの彼のチームに感謝します。
+  <li>拡張モジュールのバージョニングサポート<br>
+    現在の所ほとんど使用されていませんが、この仕組みはバージョンの異なる
+    拡張モジュールを別のモジュールとして扱うために導入されています。この
+    変更による否定的側面は、以前のバージョンのPHP対応した拡張モジュール
+    をロードすると、分かり易いメッセージを出力する代わりにクラッシュして
+    しまうことです。PHP 4.1.0用にビルドされた拡張モジュール*だけ*を使用
+    するように気をつけてください。
+  <li>すぐに使える(turn-key)出力の圧縮サポート
+  <li><b>多くの</b>バグフィクスと新しい関数
+</ul>
+お気づきの人も多いかと思いますが、このバージョンは非常に歴史的なものです。
+なぜなら(バージョン番号の)2番目の数字を初めてインクリメントしたからです:)
+この前例の無い変更には主に2つの理由、すなわち新しい入力インターフェース
+とバージョニングサポートによってモジュールのバイナリレベルでの互換性が失
+われたことによります。<br>
+<br>
+以下の記述は新しい入力方式(ここで言う入力方式とは、フォームから送信され
+た内容やクッキー、環境変数、セッション変数等にPHPスクリプトからアクセス
+する方法のことです)に関するものです。PHP 4.1.0での変更点の完全な一覧は
+<a href="ChangeLog-4_1_0.html">changelog</a>を参照下さい。<br>
+<br>
+<hr width="90%">
+<br>
+<font size="+2">セキュリティ：新しい入力方式</font><br>
+<br>
+なによりもまず、貴方がこの先何を読むにせよ、PHP 4.1.0は以前の入力方式を
+サポート<b>する</b>ということを強調しておきます。以前のアプリケーションは
+変更することなしに問題なく動作します。<br>
+<br>
+さぁ、古い話はほうっておいて先に進みましょう :)<br>
+<br>
+いくつかの理由によって、register_globalsがonになっている(つまりフォーム、
+サーバそして環境変数が自動的にグローバル変数になる)と、色々な意味で危険
+があります。例えば、以下のようなちょっとしたコードを考えてみましょう：<br>
+<br>
+<code><font color="#000000">
+<font color="#0000BB">&lt;?php<br /></font><font color="#007700">if&nbsp;(</font><font color="#0000BB">authenticate_user</font><font color="#007700">())&nbsp;{<br />&nbsp;&nbsp;</font><font color="#0000BB">$authenticated&nbsp;</font><font color="#007700">=&nbsp;</font><font color="#0000BB">true</font><font color="#007700">;<br />}<br />...<br /></font><font color="#0000BB">?&gt;</font>
+</font>
+</code>
+<br>
+このコードは危険です。なぜならリモートユーザが'authenticated'をフォーム
+変数として送信するだけで、たとえ authenticate_user() がfalseを返したと
+しても $authenticated は実際には true となってしまうのです。これは単純
+な例ですが、実際にも少なからぬPHPのアプリケーションがこの機能に関連する
+問題によって危険なものとなっています。<br>
+<br>
+安全なコードをPHPで書くのは十分に可能ですが、私たちはPHPが危険なコードを
+あまりに簡単に書けてしまうのは良くないと考えて、大規模な変更を行い、
+register_globalsを使用*しない*ように推奨する決心をしました。言うまでも
+なく、世界中の非常に多くのPHPコードはこの機能の存在を前提としているので
+PHPから実際に削除してしまう、という考えは現在のところまったくありませんが、
+出来る限りこの機能の使用を中止するように推奨していくつもりです。<br>
+<br>
+register_globalsをoffにしてPHPをアプリケーションを書くユーザの助けとなる
+ように、以前のグローバル変数の代わりとなるようないくつかの新しい特別な
+変数を追加しました。新しい特殊な配列は以下の7つです：<br>
+<br>
+<ul>
+  <li>$_GET - GETを通じて送信された内容が格納されます
+  <li>$_POST - POSTを通じて送信された内容が格納されます
+  <li>$_COOKIE - HTTPクッキーの内容が格納されます
+  <li>$_SERVER - サーバ変数の内容が格納されます(例:REMOTE_ADDR)
+  <li>$_ENV - 環境変数が格納されます
+  <li>$_REQUEST - GET, POST, クッキーの内容が格納されます。言い換えると、
+      ユーザから送信された全ての情報ということです。セキュリティ的側面
+      から見ると必ずしも信頼できるものではありません。
+  <li>$_SESSION - セッションモジュールにより登録された内容が格納されます
+</ul>
+さて、これらの変数は特殊な内容を格納していますが、他にも特別なことが
+あります。それは、どのようなスコープであっても自動的にグローバル変数
+として扱われる、ということです。これはつまり、'global'宣言をすることなく
+どこでもこれらの変数にアクセスできるということです。例えば：<br>
+<br>
+<code><font color="#000000">
+<font color="#0000BB">&lt;?php<br /></font><font color="#007700">function&nbsp;</font><font color="#0000BB">example1</font><font color="#007700">()<br />{<br />&nbsp;&nbsp;&nbsp;&nbsp;print&nbsp;</font><font color="#0000BB">$_GET</font><font color="#007700">[</font><font color="#DD0000">"name"</font><font color="#007700">];&nbsp;&nbsp;&nbsp;</font><font color="#FF8000">// 動作します。 'global $_GET;' は不要です!<br /></font><font color="#007700">}<br /></font><font color="#0000BB">?&gt;</font>
+</font>
+</code><br>
+<br>
+といったコードが問題なく動作します。この機能が古いコードを新しいコードに
+書き直す際の痛みを和らげてくれることを期待しています。また、この機能は
+新規にコードを書くが非常に簡単になるという自信があります。もう一つ、
+ちょっとした機能があります。それは$_SESSION変数に新しい内容を追加すると、
+その内容を自動的に(つまり、session_register()を呼んだかのように)
+セッション変数として登録してくれる、ということです。この機能は
+セッションモジュールに関してのみ適用されます。つまり$_ENVに新しい内容を
+追加しても、暗黙のうちにputenv()が実行される、ということはありません。<br>
+<br>
+PHP 4.1.0 はまだデフォルトでregister_globalsをonにしています。これは
+過渡期のバージョンなので、私たちはアプリケーションの作者、特に世界中の
+人々に使われるようなアプリケーションの作者の方々に、register_globalsが
+offになっている環境でもそのアプリケーションが動作するように変更することを
+推奨します。もちろん、PHP 4.1.0 で提供される新しい機能を使用することで
+移行を簡単にすることが出来ます。<br>
+<br>
+PHPの次のsemi-majorバージョンでは、PHPを新規インストールしたときには
+デフォルトでregister_globalsがoffとなる予定です。しかし心配は不要です。
+すでにregister_globalsがonになっているphp.iniファイルがある場合にそれを
+変更するようなことはありません。新しいマシンにPHPをインストールした場合
+(主として新規の場合)にのみ影響します。もちろん、それをonにすることも
+できます。<br>
+<br>
+注意：これらの配列のうち、いくつかは古い名前(例えば $HTTP_GET_VARS)を
+持っています。これらの名前はまだ使用可能ですが、この短くて自動的に
+グローバルとなる新しい変数を使用することをお勧めします。<br>
+<br>
+この問題を指摘、分析してくれた Shaun Clowes (shaun@securereality.com.au) 
+に感謝します。<br>
+<br>
+<HR>
+<div class="footer"><a href="http://www.apache.org/"><img src="../images/apache_pb.gif" width="259" height="32" border="0" align="left" alt="APACHE.ORG"></a>All 
+  Rights Reserved, Copyright (C) 2001 Japan PHP User's Group<br>
+  $Id: release_4_1_0.html,v 1.1.1.1 2002/09/22 09:32:20 kawa Exp $<br>
+  <a style="font-size: 10pt" href="mailto:webstaff@php.gr.jp">webstaff@php.gr.jp</a> </div>
+
+</BODY></HTML>

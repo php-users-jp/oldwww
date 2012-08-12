@@ -1,0 +1,77 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Frameset//EN">
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+  "http://www.w3.org/TR/REC-html40/loose.dtd">
+<HTML lang="ja">
+<HEAD>
+<META http-equiv="Content-Type" content="text/html; charset=EUC-JP">
+<META name="description" content="__COMMENT__">
+<META http-equiv="Content-Style-Type" content="text/css">
+<META http-equiv="Content-Script-Type" content="text/javascript">
+<TITLE>PHP 4.1.0 Release Announcement</TITLE>
+<LINK rel="stylesheet" href="../style.css">
+<!--<SCRIPT language="JavaScript" src="rollover.js">
+</SCRIPT> -->
+</HEAD> 
+
+<BODY>
+
+<H1>PHP 4.1.1 Release Announcement</H1> 
+
+<DIV class="note">
+この和訳は 藤本@アストラザスタジオ 様に頂きました。ありがとう御座います。
+</DIV>
+<br>
+<DIV class="note">
+<b>ご注意</b><br>
+藤本様に質問のメールなどを出すのはご遠慮ください。<br>
+和訳に関する質問やミスや改良案などございます方は<a href="mailto:webstaff@php.gr.jp">webstaff</a>までお願いします。<br>
+原文は<a href="http://www.php.net/release_4_1_1.php">http://www.php.net/release_4_1_1.php</a>になりますのでそちらをご参照下さい。<br>
+また、技術的な内容に関しましては<a href="http://ns1.php.gr.jp/mailman/listinfo/php-users">PHP-usersメーリングリスト</a>へお願いします。
+</DIV>
+<br>
+<HR>
+<br>
+<font size="+2">PHP 4.1.1 Release Announcement</font><br>
+<br>
+PHP 4.1.0には幾つかのバグがあったためPHP 4.1.1をリリースすることに
+しました。修正されたバグは重大なものではなく、少し困ってしまう、
+という程度のものです。<br>
+既にPHP 4.1.0へアップグレードした方は、以下に示すバグが問題と
+なっているのでない限りPHP 4.1.1にはアップグレードしないことを
+お勧めします。<br>
+<br>
+このリリースでは、新しい機能の追加やセキュリティの更新はありません。<br>
+<br>
+修正項目一覧:<br>
+<br>
+<ul>
+<li>.NET/IIS 6との互換性の問題の解決 - これにより他のバージョンのIISでの<br>
+動作の安定性も改善される (Zeev)
+<li>スレッドを使用するプラットフォームで、スクリプトをシャットダウン
+するときにクラッシュしたりエラーが発生するバグの修正 (Zeev)
+<li>xslt拡張モジュールでのクラッシュバグの修正 (Markus, Derick)
+<li>dbaseでlongより大きい値の整数を正しく返さない問題の修正 (Vlad)
+<li>domxml拡張モジュールのバグとメモリリークの修正 (Markus)
+<li>タイムゾーンが世界標準時になっているとgmmktime()のかえす値が
+1時間ずれる問題の修正
+ - bug #9878. bfoddy@mediaone.netのパッチに拠る (jmoore)
+<li>Windowsでのgmdate()のタイムゾーンの扱いに関するバグの修正
+ - bug #13885 (jmoore)
+<li>mcrypt拡張モジュールのクラッシュバグの修正 (Derick)
+<li>mcrypt拡張モジュールを、libmcrypt 2.2を使用してコンパイルする
+ように再度変更 (Sterling)
+<li>is_file()系の関数に存在しないファイル名が与えられた場合に、
+エラーではないのにエラーを出力することがある問題の修正 (Sterling)
+<li>strtotime()が GMT +0100とGMT -0100を正しく認識していない
+バグの修正(Derick)
+</ul>
+
+<br>
+<HR>
+<div class="footer"><a href="http://www.apache.org/"><img src="../images/apache_pb.gif" width="259" height="32" border="0" align="left" alt="APACHE.ORG"></a>All 
+  Rights Reserved, Copyright (C) 2001 Japan PHP User's Group<br>
+  $Id: release_4_1_1.html,v 1.1.1.1 2002/09/22 09:32:20 kawa Exp $<br>
+  <a style="font-size: 10pt" href="mailto:webstaff@php.gr.jp">webstaff@php.gr.jp</a> </div>
+
+</BODY></HTML>

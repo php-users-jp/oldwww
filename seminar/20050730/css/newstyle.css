@@ -1,0 +1,98 @@
+A:link {
+	TEXT-DECORATION: none;
+	color: #000099;
+}
+A:visited {
+	TEXT-DECORATION: none;
+	color: #000099;
+}
+A:active {
+	TEXT-DECORATION: none;
+	color: #0000FF;
+}
+A:hover {
+	TEXT-DECORATION: underline;
+	color: #0000FF;
+}
+BODY {
+	BACKGROUND-COLOR: #ffffff
+}
+H1 {
+	BORDER-RIGHT: 1pt; BORDER-TOP: 1pt; FONT-SIZE: 2.5em; BORDER-LEFT: 6pt solid; TEXT-INDENT: 2mm; BORDER-BOTTOM: 2pt solid; BACKGROUND-COLOR: aqua
+}
+H2 {
+	FONT-SIZE: 1.8em;
+	TEXT-INDENT: 1.3em;
+	BORDER-BOTTOM: 2px solid #666666;
+	BACKGROUND-COLOR: #666699;
+	color: #FFFFFF;
+	border-top-color: #666666;
+	border-right-color: #666666;
+	border-left-color: #666666;
+	padding: 0.1em;
+}
+H3 {
+	BORDER-RIGHT: 1pt; BORDER-TOP: 1pt; FONT-SIZE: 18pt; BORDER-LEFT: 4pt solid; TEXT-INDENT: 6mm; BORDER-BOTTOM: 2pt solid; BACKGROUND-COLOR: aqua
+}
+H4 {
+	BORDER-RIGHT: 1pt; BORDER-TOP: 1pt; FONT-SIZE: 16pt; BORDER-LEFT: 3pt solid; TEXT-INDENT: 8mm; BORDER-BOTTOM: 2pt solid; BACKGROUND-COLOR: aqua
+}
+H5 {
+	BORDER-RIGHT: 1pt; BORDER-TOP: 1pt; FONT-SIZE: 14pt; BORDER-LEFT: 2pt solid; TEXT-INDENT: 10mm; BORDER-BOTTOM: 2pt solid; BACKGROUND-COLOR: aqua
+}
+H6 {
+	BORDER-RIGHT: 1pt; BORDER-TOP: 1pt; FONT-SIZE: 12pt; BORDER-LEFT: 1pt solid; TEXT-INDENT: 12mm; BORDER-BOTTOM: 2pt solid; BACKGROUND-COLOR: yellow
+}
+TABLE {
+	FONT-SIZE: 0.9em;
+}
+TH.menu {
+	TEXT-ALIGN: left
+}
+TH.index {
+	BACKGROUND-COLOR: #DDDDDD;
+
+}TD.menu {
+	FONT-SIZE: 0.9em; TEXT-INDENT: 5pt
+}
+TD.index {
+	BACKGROUND-COLOR: #EEEEEE;
+	margin: 3px;
+
+}
+TD.data {
+	BACKGROUND-COLOR: #ffebcd
+}
+STRONG {
+	FONT-WEIGHT: bold;
+}
+P {
+	TEXT-INDENT: 0.9em;
+}
+HR {
+	COLOR: #666699; HEIGHT: 2pt
+}
+DIV.left {
+	TEXT-ALIGN: left
+}
+DIV.center {
+	TEXT-ALIGN: center
+}
+DIV.right {
+	TEXT-ALIGN: right
+}
+DIV.footer {
+	FONT-SIZE: 0.8em; COLOR: #333333; FONT-STYLE: normal; TEXT-ALIGN: right
+}
+DIV.lititle {
+	FONT-WEIGHT: bold
+}
+TR.logo {
+	BACKGROUND-COLOR: #ffffff
+}
+.f12pt {
+	FONT-SIZE: 1.2em; LINE-HEIGHT: 120%
+}
+.f10pt {
+	FONT-SIZE: 0.9em; LINE-HEIGHT: 120%
+}
